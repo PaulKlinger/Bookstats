@@ -4,7 +4,8 @@
   "private": true,
   "dependencies": {
     "react": "^15.5.4",
-    "react-dom": "^15.5.4"
+    "react-dom": "^15.5.4",
+    "papaparse": "^4.3.2"
   },
   "devDependencies": {
     "react-scripts": "1.0.1"
