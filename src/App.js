@@ -22,8 +22,8 @@ class App extends Component {
         </p>
           <div className="InputCSV">
               <p>Select the xml file from the <a href="https://www.goodreads.com/review/import">Goodreads export library feature</a> below.</p>
-              <input type="file" id="library_xml" accept=".csv" ref={(ref) => this.fileUpload = ref}/>
-              <input type="button" value="process file" onClick={this.read_file} />
+              <input type="file" id="library_xml" accept=".csv" ref={(ref) => this.fileUpload = ref}
+                     onChange={this.read_file}/>
           </div>
           <div className="DataDisplay">
               <p>{(this.state.statistics === null)? "no data" : this.state.statistics.data.length + " books"}</p>

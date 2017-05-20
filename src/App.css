@@ -22,3 +22,8 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.plot_histogram {
+  max-width: 500px;
+  max-height: 500px;
+}
