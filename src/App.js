@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Statistics from './statistics.js'
+import RatingStats from './ratingstats.js'
 
 class App extends Component {
     constructor(props) {
         super(props);
-        this.state = {statistics: null, file: null};
+        this.state = {statistics: new Statistics(null), file: null};
         this.read_file = this.read_file.bind(this);
     }
   render() {
@@ -25,16 +26,21 @@ class App extends Component {
               <input type="button" value="process file" onClick={this.read_file} />
           </div>
           <div className="DataDisplay">
-              <p>{(this.state.statistics === null)? "" : this.state.statistics.data}</p>
+              <p>{(this.state.statistics === null)? "no data" : this.state.statistics.data.length + " books"}</p>
           </div>
+        <RatingStats statistics={this.state.statistics} />
       </div>
     );
   }
 
   read_file() {
+        let self = this;
         let file = this.fileUpload.files[0];
-        this.statistics = new Statistics(file);
-        this.statistics.process_file();
+        let statistics = new Statistics(file);
+        statistics.process_file().then(()=>{
+            self.setState({statistics: statistics});
+        });
+
   }
 }
 

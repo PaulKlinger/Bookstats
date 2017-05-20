@@ -5,7 +5,8 @@
   "dependencies": {
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
-    "papaparse": "^4.3.2"
+    "papaparse": "^4.3.2",
+    "plotly.js": "^1.27.1"
   },
   "devDependencies": {
     "react-scripts": "1.0.1"
