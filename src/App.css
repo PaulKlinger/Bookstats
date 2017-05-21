@@ -23,7 +23,16 @@
   to { transform: rotate(360deg); }
 }
 
+.plot {
+  float: left;
+}
+
 .plot_histogram {
   max-width: 500px;
+  max-height: 500px;
+}
+
+.plot_scatter {
+  max-width: 700px;
   max-height: 500px;
 }

@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import Statistics from './statistics.js'
 import RatingStats from './ratingstats.js'
+import ReadingStats from './readingstats.js'
 
 class App extends Component {
     constructor(props) {
@@ -28,7 +29,8 @@ class App extends Component {
           <div className="DataDisplay">
               <p>{(this.state.statistics === null)? "no data" : this.state.statistics.data.length + " books"}</p>
           </div>
-        <RatingStats statistics={this.state.statistics} />
+          <RatingStats statistics={this.state.statistics} />
+          <ReadingStats statistics={this.state.statistics} />
       </div>
     );
   }
