@@ -2,21 +2,10 @@
  * Created by Paul on 2017-05-20.
  */
 
-import Papa from 'papaparse'
 import dl from 'datalib'
 import moment from 'moment'
 
-class Book {
-    constructor(title, author, isbn, user_rating, average_rating, num_pages, date_read) {
-        this.title = title;
-        this.author = author;
-        this.isbn = isbn;
-        this.user_rating = user_rating;
-        this.average_rating = average_rating;
-        this.num_pages = num_pages;
-        this.date_read = date_read;
-    }
-}
+import parseExport from './parseExport.js';
 
 function linear_reg(xs, ys){
     let reg = dl.linearRegression(xs, ys);
@@ -28,28 +17,10 @@ function linear_reg(xs, ys){
     }
 }
 
-function to_ISO_date(datestr) {
-    return datestr.replace(/\//g, "-");
-}
-
-function iso_date_to_month(isodatestr){
-    if (isodatestr.length === 0) {return "";}
-    let parts = isodatestr.split("-");
-    return `${parts[0]}-${parts[1]}-01`;
-}
-
-function previous_iso_month(isodatestr) {
-    return moment(isodatestr).subtract(1, 'months').format("YYYY-MM-DD");
-}
-
-function next_iso_month(isodatestr) {
-    return moment(isodatestr).add(1, 'months').format("YYYY-MM-DD");
-}
-
 function three_month_moving_average(data) {
     // Calculates three month moving average of monthly data. If some of the months don't have data the average
     // is calculated over the remaining ones.
-    // data = [{date: *date in YYYY-MM-DD format*, val: *value*, num: *number of aggregated data points*},...]
+    // data = [{date: *moment*, val: *value*, num: *number of aggregated data points*},...]
     let monthsdata = {};
     let months = [];
     data.forEach(m => {
@@ -60,8 +31,8 @@ function three_month_moving_average(data) {
     months.forEach(d => {
         let totalnum = monthsdata[d].num;
         let totalval = monthsdata[d].val * totalnum;
-        let nextmonth = next_iso_month(d);
-        let prevmonth = previous_iso_month(d);
+        let nextmonth = d.add(1, 'month');
+        let prevmonth = d.subtract(1, 'month');
         if (months.indexOf(prevmonth) > -1) {
             totalval += monthsdata[prevmonth].val * monthsdata[prevmonth].num;
             totalnum += monthsdata[prevmonth].num;
@@ -70,13 +41,16 @@ function three_month_moving_average(data) {
             totalval += monthsdata[nextmonth].val * monthsdata[nextmonth].num;
             totalnum += monthsdata[nextmonth].num;
         }
-        out.x.push(d);
+        out.x.push(d.format("YYYY-MM-DD"));
         out.num.push(monthsdata[d].num);
         out.y.push(totalval / totalnum);
     });
-    console.log("moving average out:");
-    console.log(out);
     return out;
+}
+
+function sliding_window(data, ndays) {
+    // calculates mean in sliding window of
+    // data = [{date: *date in YYYY-MM-DD format*, val: *value*, num: *number of aggregated data points*},...]
 }
 
 export default class Statistics {
@@ -86,28 +60,7 @@ export default class Statistics {
     }
 
     process_file() {
-        let self = this;
-        return new Promise( (resolve, reject) => {
-            Papa.parse(this.file,
-                {complete: (results) => {
-                    results.data.forEach(columns => {
-                        if (columns[18] === "read"){
-                            self.data.push(
-                                new Book(
-                                    columns[1], // title
-                                    columns[2], // author
-                                    columns[6], // isbn ("ISBN13")
-                                    columns[7] === "0" ? null : parseFloat(columns[7]), // user_rating ("My Rating")
-                                    columns[8] === "0" ? null : parseFloat(columns[8]), // average_rating
-                                    columns[11] === "" ? null : parseFloat(columns[11]), // num_pages ("Number of Pages"),
-                                    to_ISO_date(columns[14]), // date_read
-                                ))
-                        }
-                    });
-                    resolve();
-                }});
-
-        });
+        return parseExport(this.file, this.data);
     }
 
     get user_rating_vs_average_rating() {
@@ -138,16 +91,16 @@ export default class Statistics {
 
     get user_rating_vs_date_read_avg_per_month() {
         let grouped = dl.groupby([
-                {name: "date", get: b => iso_date_to_month(b.date_read)},
+                {name: "date", get: b => b.date_read.startOf('month')},
                 {name: "rated", get: b => b.user_rating > 0}])
             .summarize({"user_rating": 'mean', "*": "count"}).execute(this.data);
         console.log(grouped);
         grouped.sort(
-            (a,b) => {if (a.date < b.date){return -1;} if (a.date > b.date){return 1;} return 0});
+            (a,b) => {return a.date.diff(b.date)});
         console.log(grouped);
         let valid_data = [];
         grouped.forEach(m => {
-            if (m.rated && m.date.length > 0) {
+            if (m.rated && m.date.isValid()) {
                 valid_data.push({date: m.date, val: m.mean_user_rating, num: m.count});
             }
         });
