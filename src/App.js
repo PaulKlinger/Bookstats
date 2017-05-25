@@ -8,8 +8,9 @@ import ReadingStats from './readingstats.js'
 class App extends Component {
     constructor(props) {
         super(props);
-        this.state = {statistics: new Statistics(null), file: null};
+        this.state = {statistics: new Statistics(null), file: null, distribute_year: true};
         this.read_file = this.read_file.bind(this);
+        this.handle_options = this.handle_options.bind(this);
     }
   render() {
     return (
@@ -26,6 +27,13 @@ class App extends Component {
               <input type="file" id="library_xml" accept=".csv" ref={(ref) => this.fileUpload = ref}
                      onChange={this.read_file}/>
           </div>
+          <div className="options">
+              <label>
+                  Spread Jan. 1 books over whole year if > 10
+                  <input name="distribute_year" type="checkbox"
+                         checked={this.state.distribute_year} onChange={this.handle_options}/>
+              </label>
+          </div>
           <div className="DataDisplay">
               <p>{(this.state.statistics === null)? "no data" : this.state.statistics.data.length + " books"}</p>
           </div>
@@ -35,11 +43,19 @@ class App extends Component {
     );
   }
 
+  handle_options(e) {
+      const target = e.target;
+      const value = target.type === 'checkbox' ? target.checked : target.value;
+      this.setState({
+          [target.name]: value
+      });
+  }
+
   read_file() {
         let self = this;
         let file = this.fileUpload.files[0];
         let statistics = new Statistics(file);
-        statistics.process_file().then(()=>{
+        statistics.process_file({distribute_year: this.state.distribute_year}).then(()=>{
             self.setState({statistics: statistics});
         });
 

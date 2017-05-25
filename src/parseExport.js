@@ -17,7 +17,27 @@ class Book {
     }
 }
 
-export default function parseExport(file, data) {
+function distribute_year(data) {
+    let year_start_books = {};
+    data.forEach(b => {
+        if (b.date_read.month() === 0 && b.date_read.date() === 1) {
+            if (!year_start_books.hasOwnProperty(b.date_read)) {
+                year_start_books[b.date_read] = [];
+            }
+            year_start_books[b.date_read].push(b);
+        }
+    });
+    for (let year in year_start_books) {
+        if (year_start_books.hasOwnProperty(year) && year_start_books[year].length > 10) {
+            let delta = Math.floor(365 / year_start_books[year].length);
+            for (let i=0; i < year_start_books[year].length; i++) {
+                year_start_books[year][i].date_read.add(delta * i, "days");
+            }
+        }
+    }
+}
+
+export default function parseExport(file, data, options) {
     return new Promise((resolve, reject) => {
         Papa.parse(file,
             {
@@ -36,6 +56,9 @@ export default function parseExport(file, data) {
                                 ))
                         }
                     });
+                    if (options.distribute_year) {
+                        distribute_year(data);
+                    }
                     resolve();
                 }
             });

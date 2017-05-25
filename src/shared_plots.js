@@ -2,23 +2,24 @@
  * Created by Paul on 2017-05-21.
  */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import createPlotlyComponent from 'react-plotlyjs';
 import Plotly from 'plotly.js/dist/plotly-cartesian'
 
 const PlotlyComponent = createPlotlyComponent(Plotly);
 
-export class ScatterPlot extends Component{
-    static regression_line(regression, min_x, max_x){
+export class ScatterPlot extends Component {
+    static regression_line(regression, min_x, max_x) {
         return {
             type: 'scattergl',
             mode: 'lines',
             y: [regression.f(min_x), regression.f(max_x)],
-            x: [min_x,max_x],
+            x: [min_x, max_x],
             name: `linear fit (R^2=${regression.R2.toPrecision(2)})`
         }
     }
-    render(){
+
+    render() {
         let raw_data = this.props.data;
         let data = [
             {
@@ -33,7 +34,7 @@ export class ScatterPlot extends Component{
                 }
             }
         ];
-        if (raw_data.regression.R2 > 0.5){
+        if (raw_data.regression.R2 > 0.5) {
             data.push(this.regression_line(raw_data.regression, Math.min(...raw_data.x), Math.max(...raw_data.x)));
         }
         let layout = {
@@ -51,14 +52,14 @@ export class ScatterPlot extends Component{
         };
         return (
             <div className="plot plot_scatter">
-            <PlotlyComponent data={data} layout={layout} config={config}/>
+                <PlotlyComponent data={data} layout={layout} config={config}/>
             </div>
         );
     }
 }
 
-export class Histogram extends Component{
-    render(){
+export class Histogram extends Component {
+    render() {
         let raw_data = this.props.data;
         let data = [
             {
@@ -85,8 +86,8 @@ export class Histogram extends Component{
     }
 }
 
-export class TimeLinePlot extends Component{
-    render(){
+export class TimeLinePlot extends Component {
+    render() {
         let raw_data = this.props.data;
         let data = [
             {
@@ -104,9 +105,10 @@ export class TimeLinePlot extends Component{
                 title: this.props.yaxis_title
             }
         };
-        if (!(raw_data.num === undefined)) {
+        if (!(raw_data.num === undefined) && (this.props.show_num === undefined || this.props.show_num)) {
+            const num_type = this.props.num_type === undefined ? "bar" : this.props.num_type;
             data.push({
-                type: 'bar',
+                type: num_type,
                 x: raw_data.x,
                 y: raw_data.num,
                 yaxis: 'y2'
@@ -129,8 +131,8 @@ export class TimeLinePlot extends Component{
     }
 }
 
-export class DensityPlot extends Component{
-    render(){
+export class DensityPlot extends Component {
+    render() {
         let raw_data = this.props.data;
         let data = [
             {
@@ -155,7 +157,7 @@ export class DensityPlot extends Component{
                 }
             }
         ];
-        if (raw_data.regression.R2 > 0.5){
+        if (raw_data.regression.R2 > 0.5) {
             data.push(this.regression_line(raw_data.regression, Math.min(...raw_data.x), Math.max(...raw_data.x)));
         }
         let layout = {

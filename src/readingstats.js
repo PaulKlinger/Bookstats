@@ -13,7 +13,8 @@ export default class ReadingStats extends Component {
             <div className="ReadingStats">
                 <Histogram data={this.props.statistics.data.map(b => b.num_pages)}
                            xaxis_title="# of pages" />
-
+                <TimeLinePlot data={this.props.statistics.pages_read_31_day_sliding_window}
+                              yaxis_title="pages_read / day" show_num={false}/>
             </div>
         );
     }

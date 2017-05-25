@@ -7,10 +7,12 @@ import moment from 'moment'
 
 import parseExport from './parseExport.js';
 
-function linear_reg(xs, ys){
+function linear_reg(xs, ys) {
     let reg = dl.linearRegression(xs, ys);
     return {
-        f: (x) => {return reg.intercept + x * reg.slope},
+        f: (x) => {
+            return reg.intercept + x * reg.slope
+        },
         rss: reg.rss,
         R: reg.R,
         R2: reg.R * reg.R
@@ -24,10 +26,10 @@ function three_month_moving_average(data) {
     let monthsdata = {};
     let months = [];
     data.forEach(m => {
-            months.push(m.date);
-            monthsdata[m.date] = {val: m.val, num: m.num};
+        months.push(m.date);
+        monthsdata[m.date] = {val: m.val, num: m.num};
     });
-    let out = {x: [], y:[], num: []};
+    let out = {x: [], y: [], num: []};
     months.forEach(d => {
         let totalnum = monthsdata[d].num;
         let totalval = monthsdata[d].val * totalnum;
@@ -48,9 +50,41 @@ function three_month_moving_average(data) {
     return out;
 }
 
-function sliding_window(data, ndays) {
-    // calculates mean in sliding window of
-    // data = [{date: *date in YYYY-MM-DD format*, val: *value*, num: *number of aggregated data points*},...]
+function nday_sliding_window(data, ndays) {
+    // calculates mean in sliding window of width ndays
+    // data = [{date: *moment*, val: *value*, num: *number of aggregated data points*},...]
+    // out.num total number of datapoints in sliding window if num is given
+
+    let daydata = {};
+    data.forEach(d => daydata[d.date] = d);
+
+    let min = moment.min(data.map(d => d.date));
+    let max = moment.max(data.map(d => d.date));
+
+    let out = {x: [], y: [], num: []};
+
+    let day = min.clone();
+    let vals = [];
+    let nums = [];
+    while (day.isSameOrBefore(max)) {
+        if (daydata.hasOwnProperty(day)) {
+            vals.push(daydata[day].val);
+            nums.push(daydata[day].num);
+        } else {
+            vals.push(0);
+            nums.push(0);
+        }
+        if (vals.length === ndays) {
+            out.x.push(day.clone().add(Math.ceil((ndays - 1) / 2), "days").format("YYYY-MM-DD"));
+            out.y.push(dl.mean(vals));
+            out.num.push(dl.sum(nums));
+            vals.shift();
+            nums.shift();
+        }
+
+        day.add(1, "days");
+    }
+    return out;
 }
 
 export default class Statistics {
@@ -59,14 +93,14 @@ export default class Statistics {
         this.data = [];
     }
 
-    process_file() {
-        return parseExport(this.file, this.data);
+    process_file(options) {
+        return parseExport(this.file, this.data, options);
     }
 
     get user_rating_vs_average_rating() {
         let out = {x: [], y: [], text: []};
         this.data.forEach(book => {
-            if (book.user_rating > 0 && book.average_rating > 0){
+            if (book.user_rating > 0 && book.average_rating > 0) {
                 out.x.push(book.average_rating);
                 out.y.push(book.user_rating);
                 out.text.push(`${book.title} (${book.author})`);
@@ -79,7 +113,7 @@ export default class Statistics {
     get user_rating_vs_num_pages() {
         let out = {x: [], y: [], text: []};
         this.data.forEach(book => {
-            if (book.user_rating > 0 && book.num_pages > 0){
+            if (book.user_rating > 0 && book.num_pages > 0) {
                 out.y.push(book.user_rating);
                 out.x.push(book.num_pages);
                 out.text.push(`${book.title} (${book.author})`);
@@ -91,12 +125,13 @@ export default class Statistics {
 
     get user_rating_vs_date_read_avg_per_month() {
         let grouped = dl.groupby([
-                {name: "date", get: b => b.date_read.startOf('month')},
-                {name: "rated", get: b => b.user_rating > 0}])
+            {name: "date", get: b => b.date_read.clone().startOf('month')},
+            {name: "rated", get: b => b.user_rating > 0}])
             .summarize({"user_rating": 'mean', "*": "count"}).execute(this.data);
-        console.log(grouped);
         grouped.sort(
-            (a,b) => {return a.date.diff(b.date)});
+            (a, b) => {
+                return a.date.diff(b.date)
+            });
         console.log(grouped);
         let valid_data = [];
         grouped.forEach(m => {
@@ -106,6 +141,22 @@ export default class Statistics {
         });
         console.log(valid_data);
         return three_month_moving_average(valid_data);
+    }
+
+    get pages_read_31_day_sliding_window() {
+        let grouped = dl.groupby([
+            {name: "date", get: b => b.date_read},
+            {name: "has_pages", get: b => b.num_pages > 0}])
+            .summarize({"num_pages": 'sum', "*": "count"}).execute(this.data);
+        console.log(grouped);
+        let valid_data = [];
+        grouped.forEach(m => {
+            if (m.has_pages && m.date.isValid()) {
+                valid_data.push({date: m.date, val: m.sum_num_pages});
+            }
+        });
+        console.log(valid_data);
+        return nday_sliding_window(valid_data, 31);
     }
 }
 
