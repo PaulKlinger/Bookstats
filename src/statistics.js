@@ -31,8 +31,8 @@ function three_month_moving_average(data) {
     months.forEach(d => {
         let totalnum = monthsdata[d].num;
         let totalval = monthsdata[d].val * totalnum;
-        let nextmonth = d.add(1, 'month');
-        let prevmonth = d.subtract(1, 'month');
+        let nextmonth = d.clone().add(1, 'month');
+        let prevmonth = d.clone().subtract(1, 'month');
         if (months.indexOf(prevmonth) > -1) {
             totalval += monthsdata[prevmonth].val * monthsdata[prevmonth].num;
             totalnum += monthsdata[prevmonth].num;
