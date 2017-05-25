@@ -71,7 +71,7 @@ function nday_sliding_window(data, ndays, fillval) {
     while (day.isSameOrBefore(max)) {
         if (daydata.hasOwnProperty(day)) {
             nums.push(daydata[day].num);
-            for (let i = 0; i < (Number.isInteger(daydata[day].num) ? daydata[day].num : 1); i++) {
+            for (let i = 0; i < (dl.isNumber(daydata[day].num) ? daydata[day].num : 1); i++) {
                 vals.push(daydata[day].val);
             }
         } else {
