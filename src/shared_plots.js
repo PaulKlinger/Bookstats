@@ -88,13 +88,14 @@ export class Histogram extends Component {
 
 export class TimeLinePlot extends Component {
     render() {
-        let raw_data = this.props.data;
+        let raw_data_1 = this.props.data.data1;
+        let raw_data_2 = this.props.data.data2;
         let data = [
             {
                 type: 'scattergl',
                 mode: 'line',
-                x: raw_data.x,
-                y: raw_data.y,
+                x: raw_data_1.x,
+                y: raw_data_1.y,
                 yaxis: 'y1'
             }
         ];
@@ -105,12 +106,12 @@ export class TimeLinePlot extends Component {
                 title: this.props.yaxis_title
             }
         };
-        if (!(raw_data.num === undefined) && (this.props.show_num === undefined || this.props.show_num)) {
-            const num_type = this.props.num_type === undefined ? "bar" : this.props.num_type;
+        if (!(raw_data_2 === undefined)) {
+            const y2_type = this.props.y2_type === undefined ? "bar" : this.props.y2_type;
             data.push({
-                type: num_type,
-                x: raw_data.x,
-                y: raw_data.num,
+                type: y2_type,
+                x: raw_data_2.x,
+                y: raw_data_2.y,
                 yaxis: 'y2'
             });
             layout.yaxis2 = {

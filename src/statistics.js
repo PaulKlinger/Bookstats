@@ -29,7 +29,7 @@ function three_month_moving_average(data) {
         months.push(m.date);
         monthsdata[m.date] = {val: m.val, num: m.num};
     });
-    let out = {x: [], y: [], num: []};
+    let out = {x: [], y: [], y2: []};
     months.forEach(d => {
         let totalnum = monthsdata[d].num;
         let totalval = monthsdata[d].val * totalnum;
@@ -44,16 +44,17 @@ function three_month_moving_average(data) {
             totalnum += monthsdata[nextmonth].num;
         }
         out.x.push(d.format("YYYY-MM-DD"));
-        out.num.push(monthsdata[d].num);
+        out.y2.push(monthsdata[d].num);
         out.y.push(totalval / totalnum);
     });
     return out;
 }
 
-function nday_sliding_window(data, ndays) {
+function nday_sliding_window(data, ndays, fillval) {
     // calculates mean in sliding window of width ndays
     // data = [{date: *moment*, val: *value*, num: *number of aggregated data points*},...]
-    // out.num total number of datapoints in sliding window if num is given
+    // fillval is the value to assign days with no data (if null they are ignored, 0 they are respected for mean calc)
+    // out.y2 total number of datapoints in sliding window if num is given
 
     let daydata = {};
     data.forEach(d => daydata[d.date] = d);
@@ -61,23 +62,26 @@ function nday_sliding_window(data, ndays) {
     let min = moment.min(data.map(d => d.date));
     let max = moment.max(data.map(d => d.date));
 
-    let out = {x: [], y: [], num: []};
+    let out = {x: [], y: [], y2: []};
 
     let day = min.clone();
     let vals = [];
     let nums = [];
+
     while (day.isSameOrBefore(max)) {
         if (daydata.hasOwnProperty(day)) {
-            vals.push(daydata[day].val);
             nums.push(daydata[day].num);
+            for (let i = 0; i < (Number.isInteger(daydata[day].num) ? daydata[day].num : 1); i++) {
+                vals.push(daydata[day].val);
+            }
         } else {
-            vals.push(0);
+            vals.push(fillval);
             nums.push(0);
         }
         if (vals.length === ndays) {
             out.x.push(day.clone().add(Math.ceil((ndays - 1) / 2), "days").format("YYYY-MM-DD"));
-            out.y.push(dl.mean(vals));
-            out.num.push(dl.sum(nums));
+            out.y.push(dl.count.valid(vals) > 0 ? dl.mean(vals) : null);
+            out.y2.push(dl.sum(nums));
             vals.shift();
             nums.shift();
         }
@@ -125,22 +129,16 @@ export default class Statistics {
 
     get user_rating_vs_date_read_avg_per_month() {
         let grouped = dl.groupby([
-            {name: "date", get: b => b.date_read.clone().startOf('month')},
+            {name: "date", get: b => b.date_read},
             {name: "rated", get: b => b.user_rating > 0}])
             .summarize({"user_rating": 'mean', "*": "count"}).execute(this.data);
-        grouped.sort(
-            (a, b) => {
-                return a.date.diff(b.date)
-            });
-        console.log(grouped);
         let valid_data = [];
         grouped.forEach(m => {
             if (m.rated && m.date.isValid()) {
                 valid_data.push({date: m.date, val: m.mean_user_rating, num: m.count});
             }
         });
-        console.log(valid_data);
-        return three_month_moving_average(valid_data);
+        return {data1: nday_sliding_window(valid_data, 31, null)};
     }
 
     get pages_read_31_day_sliding_window() {
@@ -149,14 +147,21 @@ export default class Statistics {
             {name: "has_pages", get: b => b.num_pages > 0}])
             .summarize({"num_pages": 'sum', "*": "count"}).execute(this.data);
         console.log(grouped);
-        let valid_data = [];
+        let valid_data_pages = [];
+        let valid_data_books = [];
         grouped.forEach(m => {
-            if (m.has_pages && m.date.isValid()) {
-                valid_data.push({date: m.date, val: m.sum_num_pages});
+            if (m.date.isValid()) {
+                valid_data_books.push({date: m.date, val: m.count});
+                if (m.has_pages) {
+                    valid_data_pages.push({date: m.date, val: m.sum_num_pages});
+                }
             }
         });
-        console.log(valid_data);
-        return nday_sliding_window(valid_data, 31);
+        return {
+            data1: nday_sliding_window(valid_data_pages, 31, 0),
+            data2: nday_sliding_window(valid_data_books, 31, 0)
+        }
+
     }
 }
 
