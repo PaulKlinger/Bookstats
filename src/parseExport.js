@@ -42,17 +42,18 @@ export default function parseExport(file, data, options) {
         Papa.parse(file,
             {
                 complete: (results) => {
+                    const column_names = results.data.shift();
                     results.data.forEach(columns => {
                         if (columns[18] === "read") {
                             data.push(
                                 new Book(
-                                    columns[1], // title
-                                    columns[2], // author
-                                    columns[6], // isbn ("ISBN13")
-                                    columns[7] === "0" ? null : parseFloat(columns[7]), // user_rating ("My Rating")
-                                    columns[8] === "0" ? null : parseFloat(columns[8]), // average_rating
-                                    columns[11] === "" ? null : parseFloat(columns[11]), // num_pages ("Number of Pages"),
-                                    moment(columns[14], "YYYY/MM/DD"), // date_read
+                                    columns[column_names.indexOf("Title")], // title
+                                    columns[column_names.indexOf("Author")], // author
+                                    columns[column_names.indexOf("ISBN13")], // isbn
+                                    columns[column_names.indexOf("My Rating")] === "0" ? null : parseFloat(columns[7]), // user_rating
+                                    columns[column_names.indexOf("Average Rating")] === "0" ? null : parseFloat(columns[8]), // average_rating
+                                    columns[column_names.indexOf("Number of Pages")] === "" ? null : parseFloat(columns[11]), // num_pages
+                                    moment(columns[column_names.indexOf("Date Read")], "YYYY/MM/DD"), // date_read
                                 ))
                         }
                     });
