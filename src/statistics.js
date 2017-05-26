@@ -138,7 +138,7 @@ export default class Statistics {
                 valid_data.push({date: m.date, val: m.mean_user_rating, num: m.count});
             }
         });
-        return {data1: nday_sliding_window(valid_data, 31, null)};
+        return {data1: nday_sliding_window(valid_data, 61, null)};
     }
 
     get pages_read_31_day_sliding_window() {
@@ -146,7 +146,6 @@ export default class Statistics {
             {name: "date", get: b => b.date_read},
             {name: "has_pages", get: b => b.num_pages > 0}])
             .summarize({"num_pages": 'sum', "*": "count"}).execute(this.data);
-        console.log(grouped);
         let valid_data_pages = [];
         let valid_data_books = [];
         grouped.forEach(m => {
@@ -158,10 +157,72 @@ export default class Statistics {
             }
         });
         return {
-            data1: nday_sliding_window(valid_data_pages, 31, 0),
-            data2: nday_sliding_window(valid_data_books, 31, 0)
+            data1: nday_sliding_window(valid_data_pages, 61, 0),
+            data2: nday_sliding_window(valid_data_books, 61, 0)
         }
+    }
+
+    get weekday_finish() {
+        let counts = dl.count.map(
+            this.data.filter(b => b.date_read.isValid() && !b.book_moved).map(b => b.date_read.day()));
+        return {
+            x: ["Mo", "Tu", "Wed", "Th", "Fr", "Sa", "Su"],
+            y: [counts[0], counts[1], counts[2], counts[3], counts[4], counts[5], counts[6]]
+        };
 
     }
-}
 
+    get author_stats() {
+        if (!(this._author_stats === undefined)) {
+            return this._author_stats
+        }
+        let author_books = {};
+        this.data.forEach(b => {
+            if (!author_books.hasOwnProperty(b.author)) {
+                author_books[b.author] = [];
+            }
+            author_books[b.author].push(b);
+        });
+
+        let author_stats = {};
+        for (let a in author_books) {
+            if (author_books.hasOwnProperty(a)) {
+                author_stats[a] = {
+                    avg_user_rating: dl.mean(author_books[a].map(b => b.user_rating).filter(r => r >0)),
+                    num_books: author_books[a].length,
+                    avg_rating_diff: dl.mean(author_books[a].map(b => b.user_rating - b.average_rating))
+                };
+                if (author_stats[a].avg_user_rating === 0){
+                    author_stats[a].avg_user_rating = null;
+                    author_stats[a].avg_user_rating_2prec = null;
+                    author_stats[a].avg_rating_diff = null;
+                }
+                else {author_stats[a].avg_user_rating_2prec = author_stats[a].avg_user_rating.toPrecision(2);}
+            }
+        }
+        this._author_stats = author_stats;
+        return author_stats;
+    }
+
+    get author_stats_list() {
+        let authors = Object.getOwnPropertyNames(this.author_stats);
+        let out = authors.map(a => ({author: a,
+            num_books: this.author_stats[a].num_books,
+            avg_user_rating_2prec: this.author_stats[a].avg_user_rating_2prec,
+            avg_rating_diff: this.author_stats[a].avg_rating_diff
+        }));
+        return out;
+    }
+
+    get author_num_books_vs_avg_user_rating() {
+        let out = {x: [], y: [], text: []};
+        for (let a in this.author_stats){
+            if (this.author_stats.hasOwnProperty(a) && dl.isNumber(this.author_stats[a].avg_user_rating)){
+            out.x.push(this.author_stats[a].num_books);
+            out.y.push(this.author_stats[a].avg_user_rating);
+            out.text.push(a);
+        }}
+        out.regression = linear_reg(out.x, out.y);
+        return out;
+    }
+}

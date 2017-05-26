@@ -86,6 +86,32 @@ export class Histogram extends Component {
     }
 }
 
+export class Bar extends Component {
+    render() {
+        let data = [
+            {
+                type: 'bar',
+                x: this.props.data.x,
+                y: this.props.data.y
+            }
+        ];
+        let layout = {
+            xaxis: {
+                title: this.props.xaxis_title,
+            },
+            yaxis: {title: this.props.yaxis_title}
+        };
+        let config = {
+            showLink: false,
+        };
+        return (
+            <div className="plot plot_bar">
+                <PlotlyComponent data={data} layout={layout} config={config}/>
+            </div>
+        );
+    }
+}
+
 export class TimeLinePlot extends Component {
     render() {
         let raw_data_1 = this.props.data.data1;

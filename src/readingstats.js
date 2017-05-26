@@ -3,8 +3,7 @@
  */
 import React, { Component } from 'react';
 
-import {ScatterPlot, Histogram, DensityPlot} from './shared_plots.js'
-import {TimeLinePlot} from "./shared_plots";
+import {ScatterPlot, Histogram, DensityPlot, Bar, TimeLinePlot} from './shared_plots.js'
 
 
 export default class ReadingStats extends Component {
@@ -16,6 +15,8 @@ export default class ReadingStats extends Component {
                 <TimeLinePlot data={this.props.statistics.pages_read_31_day_sliding_window}
                               yaxis_title="pages read / day" y2_type="line"
                               yaxis2_title="books read / day"/>
+                <Bar data={this.props.statistics.weekday_finish}
+                           xaxis_title="weekday of finish date" yaxis_title="# of books"/>
             </div>
         );
     }

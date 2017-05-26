@@ -36,3 +36,26 @@
   max-width: 700px;
   max-height: 500px;
 }
+
+.plot_list {
+  overflow-y:scroll;
+  max-width: 500px;
+  max-height: 500px;
+}
+
+thead {
+  display:table-header-group
+}
+
+th {
+  padding-bottom: 1em;
+}
+
+td {
+  text-align: left;
+  margin: 0;
+}
+
+tr.SortedTable_row_odd {
+  background-color: gainsboro;
+}

@@ -14,6 +14,8 @@ class Book {
         this.average_rating = average_rating;
         this.num_pages = num_pages;
         this.date_read = date_read;
+
+        this.book_moved = false; // Book date_read has been artificially moved (e.g. to spread Jan 1 books over year)
     }
 }
 
@@ -32,6 +34,7 @@ function distribute_year(data) {
             let delta = Math.floor(365 / year_start_books[year].length);
             for (let i=0; i < year_start_books[year].length; i++) {
                 year_start_books[year][i].date_read.add(delta * i, "days");
+                year_start_books[year][i].book_moved = true;
             }
         }
     }
