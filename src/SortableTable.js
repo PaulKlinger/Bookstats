@@ -26,7 +26,7 @@ export default class SortableTable extends Component {
         let self = this;
         let sorted_data = this.props.data.sort((a, b) =>
             (this.state.sort.mult * this.props.columns.filter(c => c.column === this.state.sort.column)[0]
-                .cmpfunction(a[this.state.sort.column], b[this.state.sort.column])));
+                .cmpfunction(a, b)));
         return (
             <table>
                 <thead>

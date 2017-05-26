@@ -6,9 +6,10 @@ import moment from 'moment'
 
 
 class Book {
-    constructor(title, author, isbn, user_rating, average_rating, num_pages, date_read) {
+    constructor(title, author, isbn, user_rating, average_rating, num_pages, date_read, author_sort) {
         this.title = title;
         this.author = author;
+        this.author_sort = author_sort;
         this.isbn = isbn;
         this.user_rating = user_rating;
         this.average_rating = average_rating;
@@ -57,6 +58,7 @@ export default function parseExport(file, data, options) {
                                     columns[column_names.indexOf("Average Rating")] === "0" ? null : parseFloat(columns[8]), // average_rating
                                     columns[column_names.indexOf("Number of Pages")] === "" ? null : parseFloat(columns[11]), // num_pages
                                     moment(columns[column_names.indexOf("Date Read")], "YYYY/MM/DD"), // date_read
+                                    columns[column_names.indexOf("Author l-f")], // author_sort
                                 ))
                         }
                     });

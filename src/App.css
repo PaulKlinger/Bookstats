@@ -1,61 +1,72 @@
 .App {
-  text-align: center;
+    text-align: center;
 }
 
 .App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+    animation: App-logo-spin infinite 20s linear;
+    height: 80px;
 }
 
 .App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+    background-color: #222;
+    height: 150px;
+    padding: 20px;
+    color: white;
 }
 
 .App-intro {
-  font-size: large;
+    font-size: large;
 }
 
 @keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .plot {
-  float: left;
+    float: left;
+    max-width: 700px;
+    max-height: 500px;
 }
 
 .plot_histogram {
-  max-width: 500px;
-  max-height: 500px;
+    max-width: 500px;
+    max-height: 500px;
 }
 
 .plot_scatter {
-  max-width: 700px;
-  max-height: 500px;
 }
 
 .plot_list {
-  overflow-y:scroll;
-  max-width: 500px;
-  max-height: 500px;
+    overflow-y: scroll;
+}
+
+table {
+    border-collapse: collapse;
 }
 
 thead {
-  display:table-header-group
+    display: table-header-group
 }
 
 th {
-  padding-bottom: 1em;
+    padding-bottom: 1em;
+    padding-right: 1em;
 }
 
 td {
-  text-align: left;
-  margin: 0;
+    text-align: left;
+    margin: 0;
 }
 
 tr.SortedTable_row_odd {
-  background-color: gainsboro;
+    background-color: gainsboro;
+}
+
+.clearfloat {
+    clear: both;
 }

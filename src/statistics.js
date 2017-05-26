@@ -150,40 +150,43 @@ export default class Statistics {
         });
 
         let author_stats = {};
-        for (let a in author_books) {
-            if (author_books.hasOwnProperty(a)) {
-                author_stats[a] = {
-                    avg_user_rating: mean(author_books[a].map(b => b.user_rating).filter(r => r >0)),
-                    avg_user_rating_2prec: null,
-                    num_books: author_books[a].length,
-                    avg_rating_diff: mean(author_books[a].map(b => b.user_rating - b.average_rating))
-                };
-                if (isNum(author_stats[a].avg_user_rating)){
-                    author_stats[a].avg_user_rating_2prec = author_stats[a].avg_user_rating.toPrecision(2);
-                }
+        Object.keys(author_books).forEach(a => {
+            author_stats[a] = {
+                avg_user_rating: mean(author_books[a].map(b => b.user_rating).filter(r => r >0)),
+                avg_user_rating_2prec: null,
+                num_books: author_books[a].length,
+                avg_rating_diff: mean(author_books[a].map(b => b.user_rating - b.average_rating)),
+                author_sort: author_books[a][0].author_sort
+            };
+            if (isNum(author_stats[a].avg_user_rating)){
+                author_stats[a].avg_user_rating_2prec = author_stats[a].avg_user_rating.toPrecision(2);
             }
-        }
+        });
+
         this._author_stats = author_stats;
         return author_stats;
     }
 
     get author_stats_list() {
-        let authors = Object.getOwnPropertyNames(this.author_stats);
-        return authors.map(a => ({author: a,
+        return Object.keys(this.author_stats).map(a => ({
+            author: a,
+            author_sort: this.author_stats[a].author_sort,
             num_books: this.author_stats[a].num_books,
             avg_user_rating_2prec: this.author_stats[a].avg_user_rating_2prec,
+            avg_user_rating: this.author_stats[a].avg_user_rating,
             avg_rating_diff: this.author_stats[a].avg_rating_diff
         }));
     }
 
     get author_num_books_vs_avg_user_rating() {
         let out = {x: [], y: [], text: []};
-        for (let a in this.author_stats){
-            if (this.author_stats.hasOwnProperty(a) && isNum(this.author_stats[a].avg_user_rating)){
-            out.x.push(this.author_stats[a].num_books);
-            out.y.push(this.author_stats[a].avg_user_rating);
-            out.text.push(a);
-        }}
+        Object.keys(this.author_stats).forEach(a => {
+            if (isNum(this.author_stats[a].avg_user_rating)){
+                out.x.push(this.author_stats[a].num_books);
+                out.y.push(this.author_stats[a].avg_user_rating);
+                out.text.push(a);
+            }
+        });
         return out;
     }
 }

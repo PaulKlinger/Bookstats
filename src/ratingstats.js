@@ -20,7 +20,7 @@ export default class RatingStats extends Component {
                              xaxis_title="# pages" yaxis_title="your rating"/>
                 <TimeLinePlot data={this.props.statistics.user_rating_vs_date_read_sliding_window}
                               yaxis_title="your rating" yaxis2_title="# rated books"/>
-
+                <div className="clearfloat"/>
             </div>
         );
     }

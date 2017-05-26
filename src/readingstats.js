@@ -17,6 +17,7 @@ export default class ReadingStats extends Component {
                               yaxis2_title="books read / day"/>
                 <Bar data={this.props.statistics.weekday_finish}
                            xaxis_title="weekday of finish date" yaxis_title="# of books"/>
+                <div className="clearfloat"/>
             </div>
         );
     }
