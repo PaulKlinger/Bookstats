@@ -9,16 +9,6 @@ import Plotly from 'plotly.js/dist/plotly-cartesian'
 const PlotlyComponent = createPlotlyComponent(Plotly);
 
 export class ScatterPlot extends Component {
-    static regression_line(regression, min_x, max_x) {
-        return {
-            type: 'scattergl',
-            mode: 'lines',
-            y: [regression.f(min_x), regression.f(max_x)],
-            x: [min_x, max_x],
-            name: `linear fit (R^2=${regression.R2.toPrecision(2)})`
-        }
-    }
-
     render() {
         let raw_data = this.props.data;
         let data = [
@@ -34,9 +24,6 @@ export class ScatterPlot extends Component {
                 }
             }
         ];
-        if (raw_data.regression.R2 > 0.5) {
-            data.push(this.regression_line(raw_data.regression, Math.min(...raw_data.x), Math.max(...raw_data.x)));
-        }
         let layout = {
             autosize: true,
             hovermode: 'closest',

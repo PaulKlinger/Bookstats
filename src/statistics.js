@@ -2,53 +2,12 @@
  * Created by Paul on 2017-05-20.
  */
 
-import dl from 'datalib'
 import moment from 'moment'
 
 import parseExport from './parseExport.js';
 
-function linear_reg(xs, ys) {
-    let reg = dl.linearRegression(xs, ys);
-    return {
-        f: (x) => {
-            return reg.intercept + x * reg.slope
-        },
-        rss: reg.rss,
-        R: reg.R,
-        R2: reg.R * reg.R
-    }
-}
+import {isNum, mean, sum, countEach} from './util.js'
 
-function three_month_moving_average(data) {
-    // Calculates three month moving average of monthly data. If some of the months don't have data the average
-    // is calculated over the remaining ones.
-    // data = [{date: *moment*, val: *value*, num: *number of aggregated data points*},...]
-    let monthsdata = {};
-    let months = [];
-    data.forEach(m => {
-        months.push(m.date);
-        monthsdata[m.date] = {val: m.val, num: m.num};
-    });
-    let out = {x: [], y: [], y2: []};
-    months.forEach(d => {
-        let totalnum = monthsdata[d].num;
-        let totalval = monthsdata[d].val * totalnum;
-        let nextmonth = d.clone().add(1, 'month');
-        let prevmonth = d.clone().subtract(1, 'month');
-        if (months.indexOf(prevmonth) > -1) {
-            totalval += monthsdata[prevmonth].val * monthsdata[prevmonth].num;
-            totalnum += monthsdata[prevmonth].num;
-        }
-        if (months.indexOf(nextmonth) > -1) {
-            totalval += monthsdata[nextmonth].val * monthsdata[nextmonth].num;
-            totalnum += monthsdata[nextmonth].num;
-        }
-        out.x.push(d.format("YYYY-MM-DD"));
-        out.y2.push(monthsdata[d].num);
-        out.y.push(totalval / totalnum);
-    });
-    return out;
-}
 
 function nday_sliding_window(data, ndays, fillval) {
     // calculates mean in sliding window of width ndays
@@ -56,9 +15,12 @@ function nday_sliding_window(data, ndays, fillval) {
     // fillval is the value to assign days with no data (if null they are ignored, 0 they are respected for mean calc)
     // out.y2 total number of datapoints in sliding window if num is given
 
-    let daydata = {};
-    data.forEach(d => daydata[d.date] = d);
+    console.log("in sliding window", data );
 
+    let daydata = {};
+    data.forEach(d => {daydata[d.date] = d});
+
+    console.log("daydata", daydata);
     let min = moment.min(data.map(d => d.date));
     let max = moment.max(data.map(d => d.date));
 
@@ -71,7 +33,7 @@ function nday_sliding_window(data, ndays, fillval) {
     while (day.isSameOrBefore(max)) {
         if (daydata.hasOwnProperty(day)) {
             nums.push(daydata[day].num);
-            for (let i = 0; i < (dl.isNumber(daydata[day].num) ? daydata[day].num : 1); i++) {
+            for (let i = 0; i < (isNum(daydata[day].num) ? daydata[day].num : 1); i++) {
                 vals.push(daydata[day].val);
             }
         } else {
@@ -80,8 +42,8 @@ function nday_sliding_window(data, ndays, fillval) {
         }
         if (vals.length === ndays) {
             out.x.push(day.clone().add(Math.ceil((ndays - 1) / 2), "days").format("YYYY-MM-DD"));
-            out.y.push(dl.count.valid(vals) > 0 ? dl.mean(vals) : null);
-            out.y2.push(dl.sum(nums));
+            out.y.push(mean(vals));
+            out.y2.push(sum(nums));
             vals.shift();
             nums.shift();
         }
@@ -110,7 +72,6 @@ export default class Statistics {
                 out.text.push(`${book.title} (${book.author})`);
             }
         });
-        out.regression = linear_reg(out.x, out.y);
         return out;
     }
 
@@ -123,38 +84,42 @@ export default class Statistics {
                 out.text.push(`${book.title} (${book.author})`);
             }
         });
-        out.regression = linear_reg(out.x, out.y);
         return out;
     }
 
-    get user_rating_vs_date_read_avg_per_month() {
-        let grouped = dl.groupby([
-            {name: "date", get: b => b.date_read},
-            {name: "rated", get: b => b.user_rating > 0}])
-            .summarize({"user_rating": 'mean', "*": "count"}).execute(this.data);
+    get books_by_date_read() {
+        if (this._books_by_date_read === undefined) {
+            let date_to_books = {};
+            this.data.filter(b => b.date_read.isValid()).forEach(b => {
+                if (!date_to_books.hasOwnProperty(b.date_read)) {
+                    date_to_books[b.date_read] = {date: b.date_read, books: []};
+                }
+                date_to_books[b.date_read].books.push(b);
+            });
+            this._books_by_date_read = Object.keys(date_to_books).map(k => date_to_books[k]);
+        }
+        return this._books_by_date_read;
+    }
+
+    get user_rating_vs_date_read_sliding_window() {
         let valid_data = [];
-        grouped.forEach(m => {
-            if (m.rated && m.date.isValid()) {
-                valid_data.push({date: m.date, val: m.mean_user_rating, num: m.count});
-            }
+        console.log(this.books_by_date_read);
+        this.books_by_date_read.forEach(d => {
+                let ratings = d.books.map(b => b.user_rating).filter(x => x > 0);
+                if (ratings.length > 0) {
+                    valid_data.push({date: d.date, val: mean(ratings), num: ratings.length});
+                }
         });
+        console.log("rating_vs_date", valid_data);
         return {data1: nday_sliding_window(valid_data, 61, null)};
     }
 
     get pages_read_31_day_sliding_window() {
-        let grouped = dl.groupby([
-            {name: "date", get: b => b.date_read},
-            {name: "has_pages", get: b => b.num_pages > 0}])
-            .summarize({"num_pages": 'sum', "*": "count"}).execute(this.data);
         let valid_data_pages = [];
         let valid_data_books = [];
-        grouped.forEach(m => {
-            if (m.date.isValid()) {
-                valid_data_books.push({date: m.date, val: m.count});
-                if (m.has_pages) {
-                    valid_data_pages.push({date: m.date, val: m.sum_num_pages});
-                }
-            }
+        this.books_by_date_read.forEach(d => {
+                valid_data_books.push({date: d.date, val: d.books.length});
+                valid_data_pages.push({date: d.date, val: sum(d.books.map(b => b.num_pages))});
         });
         return {
             data1: nday_sliding_window(valid_data_pages, 61, 0),
@@ -163,7 +128,7 @@ export default class Statistics {
     }
 
     get weekday_finish() {
-        let counts = dl.count.map(
+        let counts = countEach(
             this.data.filter(b => b.date_read.isValid() && !b.book_moved).map(b => b.date_read.day()));
         return {
             x: ["Mo", "Tu", "Wed", "Th", "Fr", "Sa", "Su"],
@@ -188,16 +153,14 @@ export default class Statistics {
         for (let a in author_books) {
             if (author_books.hasOwnProperty(a)) {
                 author_stats[a] = {
-                    avg_user_rating: dl.mean(author_books[a].map(b => b.user_rating).filter(r => r >0)),
+                    avg_user_rating: mean(author_books[a].map(b => b.user_rating).filter(r => r >0)),
+                    avg_user_rating_2prec: null,
                     num_books: author_books[a].length,
-                    avg_rating_diff: dl.mean(author_books[a].map(b => b.user_rating - b.average_rating))
+                    avg_rating_diff: mean(author_books[a].map(b => b.user_rating - b.average_rating))
                 };
-                if (author_stats[a].avg_user_rating === 0){
-                    author_stats[a].avg_user_rating = null;
-                    author_stats[a].avg_user_rating_2prec = null;
-                    author_stats[a].avg_rating_diff = null;
+                if (isNum(author_stats[a].avg_user_rating)){
+                    author_stats[a].avg_user_rating_2prec = author_stats[a].avg_user_rating.toPrecision(2);
                 }
-                else {author_stats[a].avg_user_rating_2prec = author_stats[a].avg_user_rating.toPrecision(2);}
             }
         }
         this._author_stats = author_stats;
@@ -206,23 +169,21 @@ export default class Statistics {
 
     get author_stats_list() {
         let authors = Object.getOwnPropertyNames(this.author_stats);
-        let out = authors.map(a => ({author: a,
+        return authors.map(a => ({author: a,
             num_books: this.author_stats[a].num_books,
             avg_user_rating_2prec: this.author_stats[a].avg_user_rating_2prec,
             avg_rating_diff: this.author_stats[a].avg_rating_diff
         }));
-        return out;
     }
 
     get author_num_books_vs_avg_user_rating() {
         let out = {x: [], y: [], text: []};
         for (let a in this.author_stats){
-            if (this.author_stats.hasOwnProperty(a) && dl.isNumber(this.author_stats[a].avg_user_rating)){
+            if (this.author_stats.hasOwnProperty(a) && isNum(this.author_stats[a].avg_user_rating)){
             out.x.push(this.author_stats[a].num_books);
             out.y.push(this.author_stats[a].avg_user_rating);
             out.text.push(a);
         }}
-        out.regression = linear_reg(out.x, out.y);
         return out;
     }
 }
