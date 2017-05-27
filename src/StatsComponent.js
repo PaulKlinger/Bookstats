@@ -2,13 +2,13 @@
  * Created by Paul on 2017-05-27.
  */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
-import RatingStats from './RatingStats.js'
-import ReadingStats from './ReadingStats.js'
-import AuthorStats from './AuthorStats.js'
+import RatingStats from './RatingStats'
+import ReadingStats from './ReadingStats'
+import AuthorStats from './AuthorStats'
 
-
+import Section from "./Section"
 
 
 export default class StatsComponent extends Component {
@@ -17,12 +17,20 @@ export default class StatsComponent extends Component {
     }
 
     render() {
-        if (this.props.statistics === null || this.props.statistics.data.length === 0) {return null}
+        if (this.props.statistics === null || this.props.statistics.data.length === 0) {
+            return null
+        }
         return (
             <div id="stats">
-                <ReadingStats statistics={this.props.statistics} />
-                <AuthorStats statistics={this.props.statistics} />
-                <RatingStats statistics={this.props.statistics} />
+                <Section title="General" defaultVisible={true}>
+                    <ReadingStats statistics={this.props.statistics}/>
+                </Section>
+                <Section title="Author" defaultVisible={true}>
+                    <AuthorStats statistics={this.props.statistics}/>
+                </Section>
+                <Section title="Rating" defaultVisible={true}>
+                    <RatingStats statistics={this.props.statistics}/>
+                </Section>
             </div>
         );
     }

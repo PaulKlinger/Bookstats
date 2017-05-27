@@ -105,6 +105,7 @@ th {
     padding-bottom: 1em;
     padding-left: 0.5em;
     white-space: pre-wrap;
+    color: #1F76B4;
 }
 
 td {
@@ -157,4 +158,19 @@ a.tooltip:hover:before {
 }
 a.tooltip:hover:after, a:hover:before {
     opacity: 1;
+}
+
+.section-title {
+    color: #1F76B4;
+    font-family: "Patua One", cursive;
+    font-size: 15pt;
+}
+
+.section {
+    background-color: rgb(225, 237, 255);
+    border: 2px dashed #1F76B4;
+    border-radius: 20px;
+    margin: 5px;
+    margin-top: 20px;
+
 }
