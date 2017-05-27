@@ -3,9 +3,10 @@
  */
 import React, { Component } from 'react';
 
-import {ScatterPlot, Histogram, DensityPlot} from './shared_plots.js'
+import {ScatterPlot, Histogram, DensityPlot} from './shared_plots'
 import {TimeLinePlot} from "./shared_plots";
-
+import SortableTable from "./SortableTable"
+import {cmpNumNullLast} from "./util"
 
 export default class RatingStats extends Component {
     render() {
@@ -20,6 +21,21 @@ export default class RatingStats extends Component {
                              xaxis_title="# pages" yaxis_title="your rating"/>
                 <TimeLinePlot data={this.props.statistics.user_rating_vs_date_read_sliding_window}
                               yaxis_title="your rating" yaxis2_title="# rated books"/>
+                <div className="plot plot_list">
+                    <SortableTable data={this.props.statistics.book_list}
+                                   columns={[
+                        {column: "title", name: "Title",
+                            cmpfunction: (a, b) => a.title < b.title ? -1 : a.title > b.title ? 1 : 0},
+                        {column: "author", name: "Author",
+                            cmpfunction: (a, b) => a.author_sort < b.author_sort ? -1 : a.author_sort > b.author_sort ? 1 : 0},
+                        {column: "user_rating", name: "Your ★",
+                            cmpfunction: (a, b) => cmpNumNullLast(a.user_rating, b.user_rating)},
+                        {column: "avg_rating_2prec", name: "Avg. ★",
+                            cmpfunction: (a, b) => cmpNumNullLast(a.avg_rating, b.avg_rating)},
+                        {column: "rating_diff_2prec", name: "Your ★ -  Avg. ★",
+                            cmpfunction: (a, b) => cmpNumNullLast(a.rating_diff, b.rating_diff)}
+                    ]} defaultSort={{column: "rating_diff_2prec", mult: -1}}/>
+                </div>
                 <div className="clearfloat"/>
             </div>
         );

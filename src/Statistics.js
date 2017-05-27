@@ -16,7 +16,9 @@ function nday_sliding_window(data, ndays, fillval) {
     // out.y2 total number of datapoints in sliding window if num is given
 
     let daydata = {};
-    data.forEach(d => {daydata[d.date] = d});
+    data.forEach(d => {
+        daydata[d.date] = d
+    });
 
     let min = moment.min(data.map(d => d.date));
     let max = moment.max(data.map(d => d.date));
@@ -101,10 +103,10 @@ export default class Statistics {
     get user_rating_vs_date_read_sliding_window() {
         let valid_data = [];
         this.books_by_date_read.forEach(d => {
-                let ratings = d.books.map(b => b.user_rating).filter(x => x > 0);
-                if (ratings.length > 0) {
-                    valid_data.push({date: d.date, val: mean(ratings), num: ratings.length});
-                }
+            let ratings = d.books.map(b => b.user_rating).filter(x => x > 0);
+            if (ratings.length > 0) {
+                valid_data.push({date: d.date, val: mean(ratings), num: ratings.length});
+            }
         });
         return {data1: nday_sliding_window(valid_data, 61, null)};
     }
@@ -113,8 +115,8 @@ export default class Statistics {
         let valid_data_pages = [];
         let valid_data_books = [];
         this.books_by_date_read.forEach(d => {
-                valid_data_books.push({date: d.date, val: d.books.length});
-                valid_data_pages.push({date: d.date, val: sum(d.books.map(b => b.num_pages))});
+            valid_data_books.push({date: d.date, val: d.books.length});
+            valid_data_pages.push({date: d.date, val: sum(d.books.map(b => b.num_pages))});
         });
         return {
             data1: nday_sliding_window(valid_data_pages, 61, 0),
@@ -147,14 +149,14 @@ export default class Statistics {
         let author_stats = {};
         Object.keys(author_books).forEach(a => {
             author_stats[a] = {
-                avg_user_rating: mean(author_books[a].map(b => b.user_rating).filter(r => r >0)),
+                avg_user_rating: mean(author_books[a].map(b => b.user_rating).filter(r => r > 0)),
                 avg_user_rating_2prec: null,
                 num_books: author_books[a].length,
                 avg_rating_diff: mean(author_books[a].filter(b => b.user_rating > 0).map(b => b.user_rating - b.average_rating)),
                 avg_rating_diff_2prec: null,
                 author_sort: author_books[a][0].author_sort
             };
-            if (isNum(author_stats[a].avg_user_rating)){
+            if (isNum(author_stats[a].avg_user_rating)) {
                 author_stats[a].avg_user_rating_2prec = author_stats[a].avg_user_rating.toPrecision(2);
                 author_stats[a].avg_rating_diff_2prec = author_stats[a].avg_rating_diff.toPrecision(2);
             }
@@ -179,12 +181,22 @@ export default class Statistics {
     get author_num_books_vs_avg_user_rating() {
         let out = {x: [], y: [], text: []};
         Object.keys(this.author_stats).forEach(a => {
-            if (isNum(this.author_stats[a].avg_user_rating)){
+            if (isNum(this.author_stats[a].avg_user_rating)) {
                 out.x.push(this.author_stats[a].num_books);
                 out.y.push(this.author_stats[a].avg_user_rating);
                 out.text.push(a);
             }
         });
         return out;
+    }
+
+    get book_list() {
+        return this.data.map(b => ({
+            title: b.title,author: b.author, author_sort: b.author_sort,
+            user_rating: b.user_rating, avg_rating: b.average_rating,
+            avg_rating_2prec: b.average_rating.toPrecision(2),
+            rating_diff: b.user_rating === null ? null : b.user_rating - b.average_rating,
+            rating_diff_2prec: b.user_rating === null ? null : (b.user_rating - b.average_rating).toPrecision(2)
+        }))
     }
 }
