@@ -3,10 +3,8 @@
  */
 
 import React, {Component} from 'react';
-import createPlotlyComponent from 'react-plotlyjs';
+import PlotlyComponent from './PlotlyComponent';
 import Plotly from 'plotly.js/dist/plotly-cartesian'
-
-const PlotlyComponent = createPlotlyComponent(Plotly);
 
 export class ScatterPlot extends Component {
     render() {
@@ -39,7 +37,7 @@ export class ScatterPlot extends Component {
         };
         return (
             <div className="plot plot_scatter">
-                <PlotlyComponent data={data} layout={layout} config={config}/>
+                <PlotlyComponent plotly={Plotly} data={data} layout={layout} config={config}/>
             </div>
         );
     }
@@ -67,7 +65,7 @@ export class Histogram extends Component {
         };
         return (
             <div className="plot plot_histogram">
-                <PlotlyComponent data={data} layout={layout} config={config}/>
+                <PlotlyComponent plotly={Plotly} data={data} layout={layout} config={config}/>
             </div>
         );
     }
@@ -93,7 +91,7 @@ export class Bar extends Component {
         };
         return (
             <div className="plot plot_bar">
-                <PlotlyComponent data={data} layout={layout} config={config}/>
+                <PlotlyComponent plotly={Plotly} data={data} layout={layout} config={config}/>
             </div>
         );
     }
@@ -139,7 +137,7 @@ export class TimeLinePlot extends Component {
         };
         return (
             <div className="plot plot_timeline">
-                <PlotlyComponent data={data} layout={layout} config={config}/>
+                <PlotlyComponent plotly={Plotly} data={data} layout={layout} config={config}/>
             </div>
         );
     }
@@ -189,7 +187,7 @@ export class DensityPlot extends Component {
         };
         return (
             <div className="plot plot_scatter">
-                <PlotlyComponent data={data} layout={layout} config={config}/>
+                <PlotlyComponent plotly={Plotly} data={data} layout={layout} config={config}/>
             </div>
         );
     }
