@@ -4,6 +4,7 @@
 import Papa from 'papaparse'
 import moment from 'moment'
 
+import Statistics from './Statistics'
 
 class Book {
     constructor(title, author, isbn, user_rating, average_rating, num_pages, date_read, author_sort) {
@@ -42,12 +43,13 @@ function distribute_year(data) {
     }
 }
 
-export default function parseExport(file, data, options) {
+export default function parseExport(file, options) {
     return new Promise((resolve, reject) => {
         Papa.parse(file,
             {
                 complete: (results) => {
                     const column_names = results.data.shift();
+                    let data = [];
                     results.data.forEach(columns => {
                         if (columns[18] === "read") {
                             data.push(
@@ -66,7 +68,7 @@ export default function parseExport(file, data, options) {
                     if (options.distribute_year) {
                         distribute_year(data);
                     }
-                    resolve();
+                    resolve(new Statistics(data));
                 }
             });
 

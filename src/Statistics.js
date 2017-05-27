@@ -4,8 +4,6 @@
 
 import moment from 'moment'
 
-import parseExport from './parseExport.js';
-
 import {isNum, mean, sum, countEach} from './util.js'
 
 
@@ -53,13 +51,8 @@ function nday_sliding_window(data, ndays, fillval) {
 }
 
 export default class Statistics {
-    constructor(file) {
-        this.file = file;
-        this.data = [];
-    }
-
-    process_file(options) {
-        return parseExport(this.file, this.data, options);
+    constructor(data) {
+        this.data = data;
     }
 
     get user_rating_vs_average_rating() {

@@ -1,16 +1,14 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import Statistics from './Statistics.js'
-import RatingStats from './RatingStats.js'
-import ReadingStats from './ReadingStats.js'
-import AuthorStats from './AuthorStats.js'
+import StatsComponent from "./StatsComponent";
+
+
 
 class App extends Component {
     constructor(props) {
         super(props);
-        this.state = {statistics: new Statistics(null), file: null, distribute_year: true};
-        this.read_file = this.read_file.bind(this);
+        this.state = {file: null, distribute_year: true};
         this.handle_options = this.handle_options.bind(this);
     }
   render() {
@@ -25,8 +23,8 @@ class App extends Component {
         </p>
           <div className="InputCSV">
               <p>Select the xml file from the <a href="https://www.goodreads.com/review/import">Goodreads export library feature</a> below.</p>
-              <input type="file" id="library_xml" accept=".csv" ref={(ref) => this.fileUpload = ref}
-                     onChange={this.read_file}/>
+              <input type="file" name="file" id="library_xml" accept=".csv" ref={(ref) => this.fileUpload = ref}
+                     onChange={this.handle_options}/>
           </div>
           <div className="options">
               <label>
@@ -35,33 +33,23 @@ class App extends Component {
                          checked={this.state.distribute_year} onChange={this.handle_options}/>
               </label>
           </div>
-          <div className="DataDisplay">
-              <p>{(this.state.statistics === null)? "no data" : this.state.statistics.data.length + " books"}</p>
-          </div>
-          <ReadingStats statistics={this.state.statistics} />
-          <AuthorStats statistics={this.state.statistics} />
-          <RatingStats statistics={this.state.statistics} />
+          <StatsComponent file={this.state.file} distribute_year={this.state.distribute_year}/>
       </div>
     );
   }
 
   handle_options(e) {
       const target = e.target;
+      if (target.name === "file") {
+          this.setState({file: this.fileUpload.files[0]});
+          return;
+      }
       const value = target.type === 'checkbox' ? target.checked : target.value;
       this.setState({
           [target.name]: value
       });
   }
 
-  read_file() {
-        let self = this;
-        let file = this.fileUpload.files[0];
-        let statistics = new Statistics(file);
-        statistics.process_file({distribute_year: this.state.distribute_year}).then(()=>{
-            self.setState({statistics: statistics});
-        });
-
-  }
 }
 
 export default App;
