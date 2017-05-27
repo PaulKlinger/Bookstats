@@ -4,7 +4,7 @@
 }
 
 body {
-    background-color: rgba(255, 219, 123, 0.41);
+    background-color: rgb(255, 243, 215);
 }
 
 #logo {
@@ -17,7 +17,11 @@ body {
     float:left;
     font-family: 'Patua One', cursive;
     color: #1F76B4;
-    font-size: 17pt;
+}
+
+#title h1 {
+    font-size: 30pt;
+    font-weight: normal;
 }
 
 .App-header {
@@ -122,44 +126,6 @@ tr.SortedTable_row_odd {
     clear: both;
 }
 
-a.tooltip {
-    position: relative;
-    text-decoration: none;
-}
-a.tooltip:after {
-    content: attr(data-tooltip);
-    position: absolute;
-    top: 130%;
-    left: 20%;
-    background: #ffcb66;
-    padding: 5px 15px;
-    color: black;
-    border-radius : 10px;
-    white-space: nowrap;
-    opacity: 0;
-}
-a.tooltip:before {
-    content: "";
-    position: absolute;
-    width: 0;
-    height: 0;
-    border-top: 20px solid #ffcb66;
-    border-left: 20px solid transparent;
-    border-right: 20px solid transparent;
-    opacity: 0;
-    left: 30%;
-    bottom: 90%;
-}
-a.tooltip:hover:after {
-    bottom: 100%;
-}
-a.tooltip:hover:before {
-    bottom: 70%;
-}
-a.tooltip:hover:after, a:hover:before {
-    opacity: 1;
-}
-
 .section-title {
     color: #1F76B4;
     font-family: "Patua One", cursive;
@@ -169,7 +135,7 @@ a.tooltip:hover:after, a:hover:before {
 }
 
 .section {
-    background-color: rgb(225, 237, 255);
+    background-color: rgb(247, 246, 255);
     border: 2px dashed #1F76B4;
     border-radius: 20px;
     margin: 5px;

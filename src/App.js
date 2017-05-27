@@ -24,7 +24,7 @@ class App extends Component {
                 <div className="App-header">
                     <img src={logo} id="logo" alt="logo"/>
                     <div id="title">
-                        <h2>Bookstats</h2>
+                        <h1>Bookstats</h1>
                     </div>
                     <div className="clearfloat"/>
                 </div>
