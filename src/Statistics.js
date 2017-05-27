@@ -53,6 +53,7 @@ function nday_sliding_window(data, ndays, fillval) {
 export default class Statistics {
     constructor(data) {
         this.data = data;
+        this.data_valid_date_read = data.filter(b => b.date_read.isValid());
     }
 
     get user_rating_vs_average_rating() {
@@ -85,10 +86,16 @@ export default class Statistics {
         return {x: Object.keys(counts).sort(), y: Object.keys(counts).sort().map(k => counts[k])};
     }
 
+    get months_books_read_bar() {
+        const months = this.data_valid_date_read.map(b => b.date_read.clone().startOf("month").toISOString());
+        const counts = countEach(months);
+        return {x: Object.keys(counts).sort(), y: Object.keys(counts).sort().map(k => counts[k])};
+    }
+
     get books_by_date_read() {
         if (this._books_by_date_read === undefined) {
             let date_to_books = {};
-            this.data.filter(b => b.date_read.isValid()).forEach(b => {
+            this.data_valid_date_read.forEach(b => {
                 if (!date_to_books.hasOwnProperty(b.date_read)) {
                     date_to_books[b.date_read] = {date: b.date_read, books: []};
                 }
@@ -125,7 +132,7 @@ export default class Statistics {
 
     get weekday_finish() {
         let counts = countEach(
-            this.data.filter(b => b.date_read.isValid() && !b.book_moved).map(b => b.date_read.day()));
+            this.data_valid_date_read.filter(b => !b.book_moved).map(b => b.date_read.day()));
         return {
             x: ["Mo", "Tu", "Wed", "Th", "Fr", "Sa", "Su"],
             y: [counts[0], counts[1], counts[2], counts[3], counts[4], counts[5], counts[6]]

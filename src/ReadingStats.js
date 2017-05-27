@@ -10,15 +10,17 @@ export default class ReadingStats extends Component {
     render() {
         return (
             <div className="ReadingStats">
-                <Histogram data={this.props.statistics.data.map(b => b.num_pages)}
-                           xaxis_title="# of pages" />
-                <Bar data={this.props.statistics.publication_year_bar}
-                           xaxis_title="publication year" />
+                <Bar data={this.props.statistics.months_books_read_bar}
+                     xaxis_title="Month" yaxis_title="# books read" />
                 <TimeLinePlot data={this.props.statistics.pages_read_31_day_sliding_window}
                               yaxis_title="pages read / day" y2_type="line"
                               yaxis2_title="books read / day"/>
                 <Bar data={this.props.statistics.weekday_finish}
-                           xaxis_title="weekday of finish date" yaxis_title="# of books"/>
+                     xaxis_title="weekday of finish date" yaxis_title="# of books read"/>
+                <Histogram data={this.props.statistics.data.map(b => b.num_pages)}
+                           xaxis_title="# of pages" />
+                <Bar data={this.props.statistics.publication_year_bar}
+                           xaxis_title="publication year" yaxis_title="# books read"/>
                 <div className="clearfloat"/>
             </div>
         );
