@@ -1,21 +1,56 @@
 import React, {Component} from 'react';
 import ReactGA from 'react-ga'
 
-import logo from './logo.png';
+import logo from './img/logo.png';
+import error_smiley from './img/error_smiley.png'
 import './App.css';
+
 import StatsComponent from "./StatsComponent";
-import parseExport from './parseExport'
+import parseExport from "./parseExport"
+import Spinner from "./Spinner";
 
 
 class App extends Component {
     constructor(props) {
         super(props);
-        this.state = {file: null, distribute_year: true, statistics: null};
+        this.state = {file: null, distribute_year: true, statistics: null,processing: false, error: false};
         this.handle_options = this.handle_options.bind(this);
         this.calc_statistics = this.calc_statistics.bind(this);
 
         ReactGA.initialize('UA-133792-4');
         ReactGA.pageview(window.location.pathname);
+    }
+
+    handle_options(e) {
+        const target = e.target;
+        if (target.name === "file") {
+            this.setState({file: this.fileUpload.files[0], statistics: null}, this.calc_statistics);
+        } else {
+            const value = target.type === 'checkbox' ? target.checked : target.value;
+            this.setState({
+                [target.name]: value,
+                statistics: null
+            }, this.calc_statistics);
+        }
+    }
+
+    calc_statistics() {
+        let self = this;
+
+        if (this.state.file !== undefined && this.state.file !== null) {
+            this.setState({processing: true, error: false, statistics: null}, () => {
+                parseExport(this.state.file, {distribute_year: this.state.distribute_year}).then((statistics) => {
+                    ReactGA.event({
+                        category: 'statistics',
+                        action: 'calc_statistics',
+                        value: statistics.data.length
+                    });
+                    self.setState({statistics: statistics, processing: false});
+                }, () => {
+                    self.setState({statistics: null, processing: false, error: true})
+                });
+            });
+        }
     }
 
     render() {
@@ -35,9 +70,21 @@ class App extends Component {
                                 The export button can be found on <a href="https://www.goodreads.com/review/import">this
                                     page</a>,
                                 in the right column.</p>
-                            <input type="file" name="file" id="library_xml" accept=".csv"
-                                   ref={(ref) => this.fileUpload = ref}
-                                   onChange={this.handle_options}/>
+                            <div id="file_select_and_processing">
+                                <div id="file_select">
+                                    <input type="file" name="file" id="library_xml" accept=".csv"
+                                           ref={(ref) => this.fileUpload = ref}
+                                           onChange={this.handle_options}
+                                           disabled={this.state.processing}/>
+                                </div>
+                                <div id="processing" style={{display: this.state.processing ? "block" : "none"}}>
+                                    <Spinner />
+                                </div>
+                                <div id="error" style={{display: this.state.error ? "flex" : "none"}}>
+                                    <img className="error_smiley" src={error_smiley}/>error processing file
+                                </div>
+                                <div className="clearfloat"/>
+                            </div>
                             <div className="options">
                                 <label>
                                     <input name="distribute_year" type="checkbox"
@@ -76,33 +123,6 @@ class App extends Component {
             </div>
         );
     }
-
-    handle_options(e) {
-        const target = e.target;
-        if (target.name === "file") {
-            this.setState({file: this.fileUpload.files[0]}, this.calc_statistics);
-        } else {
-            const value = target.type === 'checkbox' ? target.checked : target.value;
-            this.setState({
-                [target.name]: value
-            }, this.calc_statistics);
-        }
-    }
-
-    calc_statistics() {
-        let self = this;
-        if (this.state.file !== undefined && this.state.file !== null) {
-            parseExport(this.state.file, {distribute_year: this.state.distribute_year}).then((statistics) => {
-                ReactGA.event({
-                    category: 'statistics',
-                    action: 'calc_statistics',
-                    value: statistics.data.length
-                });
-                self.setState({statistics: statistics});
-            });
-        }
-    }
-
 }
 
 export default App;

@@ -14,7 +14,7 @@ body {
 
 #title {
     padding-left: 1em;
-    float:left;
+    float: left;
     font-family: 'Patua One', cursive;
     color: #1F76B4;
 }
@@ -51,11 +51,11 @@ body {
 }
 
 #overview {
-    float:left;
+    float: left;
 }
 
 #number_stats {
-    float:left;
+    float: left;
 }
 
 #number_stats li {
@@ -140,4 +140,29 @@ tr.SortedTable_row_odd {
     border-radius: 20px;
     margin: 5px;
 
+}
+
+#file_select_and_processing {
+    display: flex;
+    align-items: center;
+}
+
+#file_select {
+    float: left
+}
+
+#processing {
+    float: left;
+}
+
+#error {
+    display: flex;
+    align-items: center;
+    margin-left: 1em;
+}
+
+.error_smiley {
+    width: 1.5em;
+    height: 1.5em;
+    padding-right: 0.5em;
 }

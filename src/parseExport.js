@@ -50,9 +50,16 @@ export default function parseExport(file, options) {
             {
                 complete: (results) => {
                     const column_names = results.data.shift();
+                    // Just check some columns to see if this is a goodreads csv (not exhaustive)
+                    if (!(column_names.indexOf("Title") > -1
+                        && column_names.indexOf("Author") > -1
+                        && column_names.indexOf("Exclusive Shelf") > -1
+                        && column_names.indexOf("Date Read") > -1)){
+                        reject();
+                    }
                     let data = [];
                     results.data.forEach(columns => {
-                        if (columns[18] === "read") {
+                        if (columns[column_names.indexOf("Exclusive Shelf")] === "read") {
                             data.push(
                                 new Book(
                                     columns[column_names.indexOf("Title")], // title
@@ -70,7 +77,11 @@ export default function parseExport(file, options) {
                     if (options.distribute_year) {
                         distribute_year(data);
                     }
-                    resolve(new Statistics(data));
+                    if (data.length > 0) {
+                        resolve(new Statistics(data));
+                    } else {
+                        reject();
+                    }
                 }
             });
 
