@@ -66,10 +66,11 @@ class App extends Component {
                 <div id="content">
                     <div id="top-bar">
                         <div className="InputCSV">
-                            <p>Select the .csv file exported from goodreads below.<br/>
-                                The export button can be found on <a href="https://www.goodreads.com/review/import">this
+                            <p>This app shows you detailed statistics about your goodreads library.<br/>
+                                To start select the .csv file exported from goodreads below.<br/>
+                                (The export function can be found on <a href="https://www.goodreads.com/review/import">this
                                     page</a>,
-                                in the right column.</p>
+                                in the right column.)</p>
                             <div id="file_select_and_processing">
                                 <div id="file_select" className="float">
                                     <input type="file" name="file" id="library_xml" accept=".csv"
