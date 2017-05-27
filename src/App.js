@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import Statistics from './statistics.js'
-import RatingStats from './ratingstats.js'
-import ReadingStats from './readingstats.js'
-import AuthorStats from './authorstats.js'
+import Statistics from './Statistics.js'
+import RatingStats from './RatingStats.js'
+import ReadingStats from './ReadingStats.js'
+import AuthorStats from './AuthorStats.js'
 
 class App extends Component {
     constructor(props) {
