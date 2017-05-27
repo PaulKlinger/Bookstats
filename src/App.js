@@ -3,7 +3,7 @@ import ReactGA from 'react-ga'
 
 import logo from './img/logo.png';
 import error_smiley from './img/error_smiley.png'
-import './App.css';
+import './css/App.css';
 
 import StatsComponent from "./StatsComponent";
 import parseExport from "./parseExport"
@@ -71,17 +71,18 @@ class App extends Component {
                                     page</a>,
                                 in the right column.</p>
                             <div id="file_select_and_processing">
-                                <div id="file_select">
+                                <div id="file_select" className="float">
                                     <input type="file" name="file" id="library_xml" accept=".csv"
                                            ref={(ref) => this.fileUpload = ref}
                                            onChange={this.handle_options}
                                            disabled={this.state.processing}/>
                                 </div>
-                                <div id="processing" style={{display: this.state.processing ? "block" : "none"}}>
+                                <div id="processing" className="float"
+                                     style={{display: this.state.processing ? "block" : "none"}}>
                                     <Spinner />
                                 </div>
                                 <div id="error" style={{display: this.state.error ? "flex" : "none"}}>
-                                    <img className="error_smiley" src={error_smiley}/>error processing file
+                                    <img className="error_smiley" alt="" src={error_smiley}/>error processing file
                                 </div>
                                 <div className="clearfloat"/>
                             </div>
@@ -94,8 +95,8 @@ class App extends Component {
                             </div>
                         </div>
                         {this.state.statistics !== null && this.state.statistics.data.length > 0 &&
-                            <div id="overview">
-                                <div id="number_stats">
+                            <div id="overview" className="float">
+                                <div id="number_stats" className="float">
                                     Found
                                     <ul>
                                         <li>{this.state.statistics.data.length + " books,"}</li>

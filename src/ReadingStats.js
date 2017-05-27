@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 
-import {ScatterPlot, Histogram, DensityPlot, Bar, TimeLinePlot} from './shared_plots.js'
+import {Histogram, Bar, TimeLinePlot} from './shared_plots.js'
 
 
 export default class ReadingStats extends Component {

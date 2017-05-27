@@ -7,6 +7,10 @@ body {
     background-color: rgb(255, 243, 215);
 }
 
+.clearfloat {
+    clear: both;
+}
+
 #logo {
     float: left;
     height: 80px;
@@ -49,12 +53,7 @@ body {
     display: inline-block;
     text-align: left;
 }
-
-#overview {
-    float: left;
-}
-
-#number_stats {
+.float {
     float: left;
 }
 
@@ -87,43 +86,8 @@ body {
     margin: 5px;
 }
 
-.plot_histogram {
-}
-
-.plot_scatter {
-}
-
 .plot_list {
     overflow-y: scroll;
-}
-
-table {
-    border-collapse: collapse;
-}
-
-thead {
-    display: table-header-group
-}
-
-th {
-    padding-bottom: 1em;
-    padding-left: 0.5em;
-    white-space: pre-wrap;
-    color: #1F76B4;
-}
-
-td {
-    text-align: left;
-    margin: 0;
-    max-width: 200px;
-}
-
-tr.SortedTable_row_odd {
-    background-color: gainsboro;
-}
-
-.clearfloat {
-    clear: both;
 }
 
 .section-title {
@@ -139,20 +103,11 @@ tr.SortedTable_row_odd {
     border: 2px dashed #1F76B4;
     border-radius: 20px;
     margin: 5px;
-
 }
 
 #file_select_and_processing {
     display: flex;
     align-items: center;
-}
-
-#file_select {
-    float: left
-}
-
-#processing {
-    float: left;
 }
 
 #error {

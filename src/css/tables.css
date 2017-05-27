@@ -1,0 +1,24 @@
+table {
+    border-collapse: collapse;
+}
+
+thead {
+    display: table-header-group
+}
+
+th {
+    padding-bottom: 1em;
+    padding-left: 0.5em;
+    white-space: pre-wrap;
+    color: #1F76B4;
+}
+
+td {
+    text-align: left;
+    margin: 0;
+    max-width: 200px;
+}
+
+tr.SortedTable_row_odd {
+    background-color: gainsboro;
+}

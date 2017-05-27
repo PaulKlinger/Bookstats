@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 
-import {ScatterPlot, Histogram, DensityPlot, Bar} from './shared_plots.js'
+import {ScatterPlot} from './shared_plots.js'
 import SortableTable from './SortableTable.js'
 import {cmpNumNullLast} from './util.js'
 

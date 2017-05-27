@@ -12,10 +12,6 @@ import Section from "./Section"
 
 
 export default class StatsComponent extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         if (this.props.statistics === null || this.props.statistics.data.length === 0) {
             return null
