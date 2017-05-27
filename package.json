@@ -1,7 +1,8 @@
 {
-  "name": "goodreads_analysis_webapp",
+  "name": "bookstats",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://almoturg.com/bookstats",
   "dependencies": {
     "moment": "^2.18.1",
     "papaparse": "^4.3.2",
