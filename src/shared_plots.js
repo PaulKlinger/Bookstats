@@ -116,6 +116,7 @@ export class TimeLinePlot extends Component {
             {
                 type: 'scattergl',
                 mode: 'line',
+                name: this.props.line_1_legend,
                 x: raw_data_1.x,
                 y: raw_data_1.y,
                 yaxis: 'y1'
@@ -133,16 +134,20 @@ export class TimeLinePlot extends Component {
         if (!(raw_data_2 === undefined)) {
             const y2_type = this.props.y2_type === undefined ? "bar" : this.props.y2_type;
             data.push({
-                type: y2_type,
+                type: 'scattergl',
+                mode: y2_type,
                 x: raw_data_2.x,
                 y: raw_data_2.y,
-                yaxis: 'y2'
+                yaxis: 'y2',
+                name: this.props.line_2_legend
             });
             layout.yaxis2 = {
                 side: 'right',
                 title: this.props.yaxis2_title,
                 overlaying: 'y' //???
             };
+            layout.showlegend = true;
+            layout.legend = {x: 0, y:1};
         }
 
         let config = {

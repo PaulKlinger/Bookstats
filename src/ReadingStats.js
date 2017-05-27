@@ -15,7 +15,8 @@ export default class ReadingStats extends Component {
                 <TimeLinePlot title="books / pages read per day, 2 month moving average"
                               data={this.props.statistics.pages_read_31_day_sliding_window}
                               yaxis_title="pages read / day" y2_type="line"
-                              yaxis2_title="books read / day"/>
+                              yaxis2_title="books read / day"
+                              line_1_legend="pages" line_2_legend="books"/>
                 <Bar title="weekday of book finish dates"
                      data={this.props.statistics.weekday_finish}
                      xaxis_title="weekday of finish date" yaxis_title="# of books"/>
