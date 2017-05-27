@@ -15,12 +15,9 @@ function nday_sliding_window(data, ndays, fillval) {
     // fillval is the value to assign days with no data (if null they are ignored, 0 they are respected for mean calc)
     // out.y2 total number of datapoints in sliding window if num is given
 
-    console.log("in sliding window", data );
-
     let daydata = {};
     data.forEach(d => {daydata[d.date] = d});
 
-    console.log("daydata", daydata);
     let min = moment.min(data.map(d => d.date));
     let max = moment.max(data.map(d => d.date));
 
@@ -103,14 +100,12 @@ export default class Statistics {
 
     get user_rating_vs_date_read_sliding_window() {
         let valid_data = [];
-        console.log(this.books_by_date_read);
         this.books_by_date_read.forEach(d => {
                 let ratings = d.books.map(b => b.user_rating).filter(x => x > 0);
                 if (ratings.length > 0) {
                     valid_data.push({date: d.date, val: mean(ratings), num: ratings.length});
                 }
         });
-        console.log("rating_vs_date", valid_data);
         return {data1: nday_sliding_window(valid_data, 61, null)};
     }
 
@@ -155,11 +150,13 @@ export default class Statistics {
                 avg_user_rating: mean(author_books[a].map(b => b.user_rating).filter(r => r >0)),
                 avg_user_rating_2prec: null,
                 num_books: author_books[a].length,
-                avg_rating_diff: mean(author_books[a].map(b => b.user_rating - b.average_rating)),
+                avg_rating_diff: mean(author_books[a].filter(b => b.user_rating > 0).map(b => b.user_rating - b.average_rating)),
+                avg_rating_diff_2prec: null,
                 author_sort: author_books[a][0].author_sort
             };
             if (isNum(author_stats[a].avg_user_rating)){
                 author_stats[a].avg_user_rating_2prec = author_stats[a].avg_user_rating.toPrecision(2);
+                author_stats[a].avg_rating_diff_2prec = author_stats[a].avg_rating_diff.toPrecision(2);
             }
         });
 
@@ -174,7 +171,8 @@ export default class Statistics {
             num_books: this.author_stats[a].num_books,
             avg_user_rating_2prec: this.author_stats[a].avg_user_rating_2prec,
             avg_user_rating: this.author_stats[a].avg_user_rating,
-            avg_rating_diff: this.author_stats[a].avg_rating_diff
+            avg_rating_diff: this.author_stats[a].avg_rating_diff,
+            avg_rating_diff_2prec: this.author_stats[a].avg_rating_diff_2prec
         }));
     }
 

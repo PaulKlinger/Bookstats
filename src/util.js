@@ -3,7 +3,9 @@
  */
 
 export function isNum(x) {
-    if (x === undefined || x === null){return false;}
+    if (x === undefined || x === null) {
+        return false;
+    }
     return !!x.toFixed;
 }
 
@@ -30,7 +32,7 @@ export function mean(a) {
             }
         }
     );
-    return num > 0 ? total/num : null;
+    return num > 0 ? total / num : null;
 }
 
 export function countNum(a) {
@@ -46,4 +48,14 @@ export function countEach(a) {
         counts[x]++;
     });
     return counts;
+}
+
+export function cmpNumNullLast(a, b) {
+    if (a === null) {
+        return -1
+    }
+    if (b === null) {
+        return 1
+    }
+    return a - b
 }

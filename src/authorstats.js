@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 
 import {ScatterPlot, Histogram, DensityPlot, Bar} from './shared_plots.js'
 import SortableTable from './SortableTable.js'
+import {cmpNumNullLast} from './util.js'
 
 
 export default class AuthorStats extends Component {
@@ -19,11 +20,11 @@ export default class AuthorStats extends Component {
                     {column: "author", name: "Author",
                         cmpfunction: (a, b) => a.author_sort < b.author_sort ? -1 : a.author_sort > b.author_sort ? 1 : 0},
                     {column: "num_books", name: "# Books",
-                        cmpfunction: (a, b) => a.num_books < b.num_books ? -1 : a.num_books > b.num_books ? 1 : 0},
-                    {column: "avg_user_rating_2prec", name: "Your Avg. Rating",
-                        cmpfunction: (a, b) =>
-                            (+a.avg_user_rating < +b.avg_user_rating || a.avg_user_rating === null)
-                            ? -1 : +a.avg_user_rating > +b.avg_user_rating ? 1 : 0}
+                        cmpfunction: (a, b) => a.num_books - b.num_books},
+                    {column: "avg_user_rating_2prec", name: "Your Avg. ★",
+                        cmpfunction: (a, b) => cmpNumNullLast(a.avg_user_rating, b.avg_user_rating)},
+                    {column: "avg_rating_diff_2prec", name: "Your ★ -  Others ★",
+                        cmpfunction: (a, b) => cmpNumNullLast(a.avg_rating_diff, b.avg_rating_diff)}
                 ]} defaultSort={{column: "avg_user_rating_2prec", mult: -1}}/>
                 </div>
                 <div className="clearfloat"/>
