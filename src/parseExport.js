@@ -7,7 +7,7 @@ import moment from 'moment'
 import Statistics from './Statistics'
 
 class Book {
-    constructor(title, author, isbn, user_rating, average_rating, num_pages, date_read, author_sort) {
+    constructor(title, author, isbn, user_rating, average_rating, num_pages, date_read, author_sort, publication_year) {
         this.title = title;
         this.author = author;
         this.author_sort = author_sort;
@@ -16,6 +16,7 @@ class Book {
         this.average_rating = average_rating;
         this.num_pages = num_pages;
         this.date_read = date_read;
+        this.publication_year = publication_year;
 
         this.book_moved = false; // Book date_read has been artificially moved (e.g. to spread Jan 1 books over year)
     }
@@ -62,6 +63,7 @@ export default function parseExport(file, options) {
                                     columns[column_names.indexOf("Number of Pages")] === "" ? null : parseFloat(columns[11]), // num_pages
                                     moment(columns[column_names.indexOf("Date Read")], "YYYY/MM/DD"), // date_read
                                     columns[column_names.indexOf("Author l-f")], // author_sort
+                                    columns[column_names.indexOf("Original Publication Year")], // publication_year
                                 ))
                         }
                     });

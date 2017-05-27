@@ -12,6 +12,8 @@ export default class ReadingStats extends Component {
             <div className="ReadingStats">
                 <Histogram data={this.props.statistics.data.map(b => b.num_pages)}
                            xaxis_title="# of pages" />
+                <Bar data={this.props.statistics.publication_year_bar}
+                           xaxis_title="publication year" />
                 <TimeLinePlot data={this.props.statistics.pages_read_31_day_sliding_window}
                               yaxis_title="pages read / day" y2_type="line"
                               yaxis2_title="books read / day"/>

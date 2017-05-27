@@ -79,6 +79,12 @@ export default class Statistics {
         return out;
     }
 
+    get publication_year_bar() {
+        let years = this.data.map(b => b.publication_year).filter(x => x > 0);
+        const counts = countEach(years);
+        return {x: Object.keys(counts).sort(), y: Object.keys(counts).sort().map(k => counts[k])};
+    }
+
     get books_by_date_read() {
         if (this._books_by_date_read === undefined) {
             let date_to_books = {};
@@ -185,7 +191,7 @@ export default class Statistics {
 
     get book_list() {
         return this.data.map(b => ({
-            title: b.title,author: b.author, author_sort: b.author_sort,
+            title: b.title, author: b.author, author_sort: b.author_sort,
             user_rating: b.user_rating, avg_rating: b.average_rating,
             avg_rating_2prec: b.average_rating.toPrecision(2),
             rating_diff: b.user_rating === null ? null : b.user_rating - b.average_rating,
