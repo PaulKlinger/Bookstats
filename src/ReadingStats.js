@@ -17,7 +17,7 @@ export default class ReadingStats extends Component {
                               yaxis_title="pages read / day" y2_type="line"
                               yaxis2_title="books read / day"
                               line_1_legend="pages" line_2_legend="books"/>
-                <Bar title="weekday of book finish dates"
+                <Bar title="# books finished by weekday"
                      data={this.props.statistics.weekday_finish}
                      xaxis_title="weekday of finish date" yaxis_title="# of books"/>
                 <Histogram title="books read by number of pages"
