@@ -32,9 +32,10 @@ function distribute_year(data) {
     });
     for (let year in year_start_books) {
         if (year_start_books.hasOwnProperty(year) && year_start_books[year].length > 10) {
-            let delta = Math.floor(365 / year_start_books[year].length);
-            for (let i=0; i < year_start_books[year].length; i++) {
-                year_start_books[year][i].date_read.add(delta * i, "days");
+            const n_books = year_start_books[year].length;
+            const delta = 365 / n_books;
+            for (let i=0; i < n_books; i++) {
+                year_start_books[year][i].date_read.add(Math.floor(delta * i), "days");
                 year_start_books[year][i].book_moved = true;
             }
         }
