@@ -17,8 +17,8 @@ export default class Section extends Component {
 
     render() {
         return (<div className="section">
-            <div className="section-title">
-                <a onClick={this.changeVisibility}>{this.props.title} {this.state.visible ? "▲" : "▼"}</a>
+            <div className="section-title" onClick={this.changeVisibility}>
+                {this.props.title} {this.state.visible ? "▲" : "▼"}
             </div>
             <div className="section-content" style={{display: this.state.visible ? "block" : "none"}}>
                 {this.props.children}
