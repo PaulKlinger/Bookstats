@@ -26,7 +26,7 @@ body {
 }
 
 .InputCSV {
-    display: inline-block;
+    float: left;
     border-radius: 10px;
     border: 10px solid #ffffff;
     background-color: #fff;
@@ -37,13 +37,17 @@ body {
     margin-top: 1em;
 }
 
-#overview {
+#top-bar {
     border-radius: 10px;
     border: 10px solid #ffffff;
     background-color: #fff;
     margin: 5px;
     display: inline-block;
     text-align: left;
+}
+
+#overview {
+    float:left;
 }
 
 #number_stats {
