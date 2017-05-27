@@ -12,7 +12,8 @@ export default class AuthorStats extends Component {
     render() {
         return (
             <div className="AuthorStats">
-                <ScatterPlot data={this.props.statistics.author_num_books_vs_avg_user_rating}
+                <ScatterPlot title="# books read by author vs your average rating"
+                             data={this.props.statistics.author_num_books_vs_avg_user_rating}
                              xaxis_title="# books read by author" yaxis_title="your average rating"/>
 
                 <div className="plot plot_list">
@@ -23,7 +24,7 @@ export default class AuthorStats extends Component {
                         cmpfunction: (a, b) => a.num_books - b.num_books},
                     {column: "avg_user_rating_2prec", name: "Your Avg. ★",
                         cmpfunction: (a, b) => cmpNumNullLast(a.avg_user_rating, b.avg_user_rating)},
-                    {column: "avg_rating_diff_2prec", name: "Your ★ -  Others ★",
+                    {column: "avg_rating_diff_2prec", name: "Your ★ -  Avg. ★",
                         cmpfunction: (a, b) => cmpNumNullLast(a.avg_rating_diff, b.avg_rating_diff)}
                 ]} defaultSort={{column: "avg_user_rating_2prec", mult: -1}}/>
                 </div>

@@ -30,8 +30,23 @@ export default class StatsComponent extends Component {
         if (this.state.statistics === null) {return null}
         return (
             <div id="stats" style={{display: this.state.statistics.data.length >0 ? "block" : "none"}}>
-                <div className="overview">
-                    <p>{(this.state.statistics === null)? "no data" : this.state.statistics.data.length + " books"}</p>
+                <div id="overview">
+                    <div id="number_stats">
+                        Found
+                        <ul>
+                            <li>{this.state.statistics.data.length + " books,"}</li>
+                            <li>{`${this.state.statistics.data.filter(b => b.user_rating > 0).length} rated books,`}</li>
+                            <li>{`${this.state.statistics.data_valid_date_read.length} books with finish date,`}</li>
+                            <li>{`by ${Object.keys(this.state.statistics.author_stats).length} authors.`}</li>
+                        </ul>
+                    </div>
+                    <div id="instructions">
+                        <p>Click and drag on any graph to zoom in, double click to zoom out again.</p>
+                        <p>Click on the table headings to change the sort order.</p>
+                        <p>The .csv file exported from goodreads does not include the date you started reading a book,
+                            so some of the graphs are not very accurate (e.g. pages read per day).</p>
+                    </div>
+                    <div className="clearfloat" />
                 </div>
                 <ReadingStats statistics={this.state.statistics} />
                 <AuthorStats statistics={this.state.statistics} />

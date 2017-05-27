@@ -1,41 +1,85 @@
 .App {
     text-align: center;
+    font-family: 'Roboto', sans-serif;
 }
 
-.App-logo {
-    animation: App-logo-spin infinite 20s linear;
+body {
+    background-color: rgba(255, 219, 123, 0.41);
+}
+
+#logo {
+    float: left;
     height: 80px;
 }
 
+#title {
+    padding-left: 1em;
+    float:left;
+    font-family: 'Patua One', cursive;
+    color: #1F76B4;
+    font-size: 17pt;
+}
+
 .App-header {
-    background-color: #222;
-    height: 150px;
-    padding: 20px;
-    color: white;
+    margin-top: 2em;
+    display: inline-block;
 }
 
-.App-intro {
-    font-size: large;
+.InputCSV {
+    display: inline-block;
+    border-radius: 10px;
+    border: 10px solid #ffffff;
+    background-color: #fff;
+    margin: 5px;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.options {
+    margin-top: 1em;
+}
+
+#overview {
+    border-radius: 10px;
+    border: 10px solid #ffffff;
+    background-color: #fff;
+    margin: 5px;
+    display: inline-block;
+    text-align: left;
+}
+
+#number_stats {
+    float:left;
+}
+
+#number_stats li {
+    text-align: left;
+}
+
+#number_stats ul {
+    margin: 0;
+}
+
+#instructions {
+    margin-left: 1em;
+    float: left;
+    max-width: 400px;
+}
+
+#instructions p {
+    margin-bottom: 0;
+    margin-top: 0.5em;
 }
 
 .plot {
     float: left;
-    max-width: 700px;
+    width: 600px;
     max-height: 500px;
+    border-radius: 10px;
+    border: 10px solid #ffffff;
+    background-color: #fff;
+    margin: 5px;
 }
 
 .plot_histogram {
-    max-width: 500px;
-    max-height: 500px;
 }
 
 .plot_scatter {
@@ -55,12 +99,14 @@ thead {
 
 th {
     padding-bottom: 1em;
-    padding-right: 1em;
+    padding-left: 0.5em;
+    white-space: pre-wrap;
 }
 
 td {
     text-align: left;
     margin: 0;
+    max-width: 200px;
 }
 
 tr.SortedTable_row_odd {
@@ -69,4 +115,42 @@ tr.SortedTable_row_odd {
 
 .clearfloat {
     clear: both;
+}
+
+a.tooltip {
+    position: relative;
+    text-decoration: none;
+}
+a.tooltip:after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: 130%;
+    left: 20%;
+    background: #ffcb66;
+    padding: 5px 15px;
+    color: black;
+    border-radius : 10px;
+    white-space: nowrap;
+    opacity: 0;
+}
+a.tooltip:before {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-top: 20px solid #ffcb66;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    opacity: 0;
+    left: 30%;
+    bottom: 90%;
+}
+a.tooltip:hover:after {
+    bottom: 100%;
+}
+a.tooltip:hover:before {
+    bottom: 70%;
+}
+a.tooltip:hover:after, a:hover:before {
+    opacity: 1;
 }

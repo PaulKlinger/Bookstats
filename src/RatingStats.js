@@ -12,16 +12,24 @@ export default class RatingStats extends Component {
     render() {
         return (
             <div className="RatingStats">
-                <p>Data length: {(this.props.statistics === null) ? 0 : this.props.statistics.data.length}</p>
-                <Histogram data={this.props.statistics.data.map(b => b.user_rating === null ? 0 : b.user_rating)}
+                <Histogram title="your book ratings"
+                           data={this.props.statistics.data.map(b => b.user_rating === null ? 0 : b.user_rating)}
                            xaxis_title="your rating" tickvals={[0,1,2,3,4,5]} ticktext={["not rated",1,2,3,4,5]} />
-                <ScatterPlot data={this.props.statistics.user_rating_vs_average_rating}
+                <ScatterPlot title="your rating vs average rating"
+                             data={this.props.statistics.user_rating_vs_average_rating}
                              xaxis_title="average rating" yaxis_title="your rating"/>
-                <ScatterPlot data={this.props.statistics.user_rating_vs_num_pages}
+                <ScatterPlot title="your rating vs number of pages"
+                             data={this.props.statistics.user_rating_vs_num_pages}
                              xaxis_title="# pages" yaxis_title="your rating"/>
-                <TimeLinePlot data={this.props.statistics.user_rating_vs_date_read_sliding_window}
+                <TimeLinePlot title="2 months moving average of your rating"
+                              data={this.props.statistics.user_rating_vs_date_read_sliding_window}
                               yaxis_title="your rating" yaxis2_title="# rated books"/>
+                <Histogram title="difference between your rating and average rating"
+                           data={this.props.statistics.data.filter(b => b.user_rating > 0)
+                    .map(b => b.user_rating - b.average_rating)}
+                           xaxis_title="Your ★ - Avg. ★" yaxis_title="# Books" />
                 <div className="plot plot_list">
+                    Δ ★ is the difference between your rating and the average rating.
                     <SortableTable data={this.props.statistics.book_list}
                                    columns={[
                         {column: "title", name: "Title",
@@ -32,7 +40,7 @@ export default class RatingStats extends Component {
                             cmpfunction: (a, b) => cmpNumNullLast(a.user_rating, b.user_rating)},
                         {column: "avg_rating_2prec", name: "Avg. ★",
                             cmpfunction: (a, b) => cmpNumNullLast(a.avg_rating, b.avg_rating)},
-                        {column: "rating_diff_2prec", name: "Your ★ -  Avg. ★",
+                        {column: "rating_diff_2prec", name: "Δ ★",
                             cmpfunction: (a, b) => cmpNumNullLast(a.rating_diff, b.rating_diff)}
                     ]} defaultSort={{column: "rating_diff_2prec", mult: -1}}/>
                 </div>

@@ -23,6 +23,7 @@ export class ScatterPlot extends Component {
             }
         ];
         let layout = {
+            title: this.props.title,
             autosize: true,
             hovermode: 'closest',
             xaxis: {
@@ -53,6 +54,8 @@ export class Histogram extends Component {
             }
         ];
         let layout = {
+            title: this.props.title,
+            autosize: true,
             xaxis: {
                 title: this.props.xaxis_title,
                 tickvals: this.props.tickvals,
@@ -81,6 +84,8 @@ export class Bar extends Component {
             }
         ];
         let layout = {
+            title: this.props.title,
+            autosize: true,
             xaxis: {
                 title: this.props.xaxis_title,
             },
@@ -111,6 +116,7 @@ export class TimeLinePlot extends Component {
             }
         ];
         let layout = {
+            title: this.props.title,
             autosize: true,
             hovermode: 'closest',
             yaxis: {
@@ -137,56 +143,6 @@ export class TimeLinePlot extends Component {
         };
         return (
             <div className="plot plot_timeline">
-                <PlotlyComponent plotly={Plotly} data={data} layout={layout} config={config}/>
-            </div>
-        );
-    }
-}
-
-export class DensityPlot extends Component {
-    render() {
-        let raw_data = this.props.data;
-        let data = [
-            {
-                type: 'histogram2dcontour',
-                x: raw_data.x,
-                y: raw_data.y,
-                text: raw_data.text,
-                marker: {
-                    symbol: 'cross',
-                    color: 'rgb(16, 32, 77)'
-                }
-            },
-            {
-                type: 'scatter',
-                mode: 'markers',
-                x: raw_data.x,
-                y: raw_data.y,
-                text: raw_data.text,
-                marker: {
-                    symbol: 'cross',
-                    color: 'rgba(50, 50, 50, 0.04)'
-                }
-            }
-        ];
-        if (raw_data.regression.R2 > 0.5) {
-            data.push(this.regression_line(raw_data.regression, Math.min(...raw_data.x), Math.max(...raw_data.x)));
-        }
-        let layout = {
-            autosize: true,
-            hovermode: 'closest',
-            xaxis: {
-                title: this.props.xaxis_title
-            },
-            yaxis: {
-                title: this.props.yaxis_title
-            }
-        };
-        let config = {
-            showLink: false,
-        };
-        return (
-            <div className="plot plot_scatter">
                 <PlotlyComponent plotly={Plotly} data={data} layout={layout} config={config}/>
             </div>
         );
