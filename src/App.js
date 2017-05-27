@@ -1,8 +1,11 @@
 import React, {Component} from 'react';
+import ReactGA from 'react-ga'
+
 import logo from './logo.png';
 import './App.css';
 import StatsComponent from "./StatsComponent";
 import parseExport from './parseExport'
+
 
 class App extends Component {
     constructor(props) {
@@ -10,6 +13,9 @@ class App extends Component {
         this.state = {file: null, distribute_year: true, statistics: null};
         this.handle_options = this.handle_options.bind(this);
         this.calc_statistics = this.calc_statistics.bind(this);
+
+        ReactGA.initialize('UA-133792-4');
+        ReactGA.pageview(window.location.pathname);
     }
 
     render() {
@@ -87,6 +93,11 @@ class App extends Component {
         let self = this;
         if (this.state.file !== undefined && this.state.file !== null) {
             parseExport(this.state.file, {distribute_year: this.state.distribute_year}).then((statistics) => {
+                ReactGA.event({
+                    category: 'statistics',
+                    action: 'calc_statistics',
+                    value: statistics.data.length
+                });
                 self.setState({statistics: statistics});
             });
         }
