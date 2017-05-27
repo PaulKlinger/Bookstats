@@ -67,7 +67,7 @@ class App extends Component {
                     <div id="top-bar">
                         <div className="InputCSV">
                             <p>This app shows you detailed statistics about your goodreads library.<br/>
-                                To start select the .csv file exported from goodreads below.<br/>
+                                To start, select the .csv file exported from goodreads below.<br/>
                                 (The export function can be found on <a href="https://www.goodreads.com/review/import">this
                                     page</a>,
                                 in the right column.)</p>
