@@ -11,7 +11,7 @@ export default class ReadingStats extends Component {
         return (
             <div className="ReadingStats">
                 <Bar title="books read per month" data={this.props.statistics.months_books_read_bar}
-                     xaxis_title="Month" yaxis_title="# books read" />
+                     xaxis_title="Month" yaxis_title="# books read" xaxis_hoverformat="%B %Y"/>
                 <TimeLinePlot title="books / pages read per day, 2 month moving average"
                               data={this.props.statistics.pages_read_31_day_sliding_window}
                               yaxis_title="pages read / day" y2_type="line"

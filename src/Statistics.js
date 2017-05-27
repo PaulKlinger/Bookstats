@@ -87,7 +87,7 @@ export default class Statistics {
     }
 
     get months_books_read_bar() {
-        const months = this.data_valid_date_read.map(b => b.date_read.clone().startOf("month").toISOString());
+        const months = this.data_valid_date_read.map(b => b.date_read.clone().startOf("month").add(1, "day").toISOString());
         const counts = countEach(months);
         return {x: Object.keys(counts).sort(), y: Object.keys(counts).sort().map(k => counts[k])};
     }

@@ -6,6 +6,8 @@ import React, {Component} from 'react';
 import PlotlyComponent from './PlotlyComponent';
 import Plotly from 'plotly.js/dist/plotly-cartesian'
 
+let defaultMargins = {l: 50, r: 50, t: 80, b: 50};
+
 export class ScatterPlot extends Component {
     render() {
         let raw_data = this.props.data;
@@ -23,6 +25,7 @@ export class ScatterPlot extends Component {
             }
         ];
         let layout = {
+            margin: defaultMargins,
             title: this.props.title,
             autosize: true,
             hovermode: 'closest',
@@ -54,6 +57,7 @@ export class Histogram extends Component {
             }
         ];
         let layout = {
+            margin: defaultMargins,
             title: this.props.title,
             autosize: true,
             xaxis: {
@@ -84,10 +88,12 @@ export class Bar extends Component {
             }
         ];
         let layout = {
+            margin: defaultMargins,
             title: this.props.title,
             autosize: true,
             xaxis: {
                 title: this.props.xaxis_title,
+                hoverformat: this.props.xaxis_hoverformat
             },
             yaxis: {title: this.props.yaxis_title}
         };
@@ -116,6 +122,7 @@ export class TimeLinePlot extends Component {
             }
         ];
         let layout = {
+            margin: defaultMargins,
             title: this.props.title,
             autosize: true,
             hovermode: 'closest',

@@ -75,7 +75,7 @@ body {
 
 .plot {
     float: left;
-    width: 600px;
+    width: 590px;
     max-height: 500px;
     border-radius: 10px;
     border: 10px solid #ffffff;
@@ -164,6 +164,8 @@ a.tooltip:hover:after, a:hover:before {
     color: #1F76B4;
     font-family: "Patua One", cursive;
     font-size: 15pt;
+    padding-top: 15px;
+    padding-bottom: 20px;
 }
 
 .section {
@@ -171,6 +173,5 @@ a.tooltip:hover:after, a:hover:before {
     border: 2px dashed #1F76B4;
     border-radius: 20px;
     margin: 5px;
-    margin-top: 20px;
 
 }
