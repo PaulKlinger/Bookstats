@@ -57,6 +57,7 @@ class App extends Component {
     render() {
         return (
             <div className="App">
+                <div id="non-footer">
                 <div className="App-header">
                     <img src={logo} id="logo" alt="logo"/>
                     <div id="title">
@@ -72,6 +73,7 @@ class App extends Component {
                                 (The export function can be found on <a href="https://www.goodreads.com/review/import">this
                                     page</a>,
                                 in the right column.)</p>
+                            <p>All processing is done in the browser, your data never leaves your computer.</p>
                             <div id="file_select_and_processing">
                                 <div id="file_select" className="float">
                                     <input type="file" name="file" id="library_xml" accept=".csv"
@@ -123,6 +125,10 @@ class App extends Component {
                     </div>
 
                     <StatsComponent statistics={this.state.statistics}/>
+                </div>
+                </div>
+                <div id="footer">
+                    Code available on <a href="https://github.com/PaulKlinger/Bookstats">GitHub</a>.
                 </div>
             </div>
         );
