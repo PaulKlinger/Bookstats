@@ -114,6 +114,7 @@ class App extends Component {
                                         reading a
                                         book,
                                         so some of the graphs are not very accurate (e.g. pages read per day).</p>
+                                    <p>It also doesn't include reread dates, so each book will only appear once.</p>
                                 </div>
                                 <div className="clearfloat"/>
                             </div>
