@@ -43,6 +43,7 @@ class App extends Component {
                     ReactGA.event({
                         category: 'statistics',
                         action: 'calc_statistics',
+                        label: statistics.data.length.toString(),
                         value: statistics.data.length
                     });
                     self.setState({statistics: statistics, processing: false});
