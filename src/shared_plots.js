@@ -160,3 +160,67 @@ export class TimeLinePlot extends Component {
         );
     }
 }
+
+export class DotViolin extends Component {
+    render() {
+        const sortedxs = this.props.data.x.slice().sort();
+        const minx = sortedxs[0];
+        const slotsize = (sortedxs[Math.floor(sortedxs.length * 0.95)] - sortedxs[Math.floor(sortedxs.length * 0.05)]) / 100;
+        const occupied = {};
+        const ys = [];
+
+        this.props.data.x.forEach(x => {
+            let y = 0;
+            const slot = Math.floor((x - minx) / slotsize);
+            while (true){
+                if (!occupied.hasOwnProperty([slot, y])){
+                    break;
+                }
+                y += 1;
+                if (!occupied.hasOwnProperty([slot, -y])){
+                    y = -y;
+                    break;
+                }
+            }
+            occupied[[slot, y]] = true;
+            ys.push(y);
+        });
+
+        let data = [
+            {
+                type: 'scattergl',
+                mode: 'markers',
+                x: this.props.data.x,
+                y: ys,
+                text: this.props.data.text,
+                hoverinfo: "x+text",
+                marker: {
+                    symbol: 'circle-dot',
+                    color: 'rgb(16, 32, 77)'
+                }
+            }
+        ];
+        let layout = {
+            margin: {t: this.props.title === undefined ? 0 : 50, l: 50, r: 50, b: 40},
+            title: this.props.title,
+            height: (this.props.size === "full") ? 500 : 250,
+            width: 550,
+            hovermode: 'closest',
+            xaxis: {
+                title: this.props.xaxis_title,
+                zeroline: false
+            },
+            yaxis: {
+                visible: false
+            }
+        };
+        let config = {
+            showLink: false,
+        };
+        return (
+            <div className={"plot plot_dotviolin" + ((this.props === 'full') ? "" : "plot_half")}>
+                <PlotlyComponent plotly={Plotly} data={data} layout={layout} config={config}/>
+            </div>
+        );
+    }
+}

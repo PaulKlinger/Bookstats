@@ -111,7 +111,11 @@ body {
 }
 
 .plot_list {
-    overflow-y: scroll;
+    overflow-y: auto;
+}
+
+.plot_half {
+    height: 250px;
 }
 
 .section-title {

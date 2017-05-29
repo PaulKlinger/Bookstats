@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 
-import {Histogram, Bar, TimeLinePlot} from './shared_plots.js'
+import {Bar, TimeLinePlot, DotViolin} from './shared_plots.js'
 
 
 export default class ReadingStats extends Component {
@@ -20,9 +20,9 @@ export default class ReadingStats extends Component {
                 <Bar title="# books finished by weekday"
                      data={this.props.statistics.weekday_finish}
                      xaxis_title="weekday of finish date" yaxis_title="# of books"/>
-                <Histogram title="books read by number of pages"
-                           data={this.props.statistics.data.map(b => b.num_pages)}
-                           xaxis_title="# of pages" />
+                <DotViolin size="full" title="books read by number of pages"
+                           data={this.props.statistics.pages_and_title}
+                           xaxis_title="# pages"/>
                 <Bar title="books read by publication year"
                      data={this.props.statistics.publication_year_bar}
                      xaxis_title="publication year" yaxis_title="# books read"/>

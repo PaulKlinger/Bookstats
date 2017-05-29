@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 
-import {ScatterPlot, Histogram, TimeLinePlot} from './shared_plots'
+import {ScatterPlot, Histogram, TimeLinePlot, DotViolin} from './shared_plots'
 import SortableTable from "./SortableTable"
 import {cmpNumNullLast} from "./util"
 
@@ -43,6 +43,8 @@ export default class RatingStats extends Component {
                             cmpfunction: (a, b) => cmpNumNullLast(a.rating_diff, b.rating_diff)}
                     ]} defaultSort={{column: "rating_diff_2prec", mult: -1}}/>
                 </div>
+                <DotViolin data={this.props.statistics.avgrating_and_title}
+                           xaxis_title="avg. rating" size="full"/>
                 <div className="clearfloat"/>
             </div>
         );

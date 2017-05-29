@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 
-import {ScatterPlot} from './shared_plots.js'
+import {ScatterPlot, DotViolin} from './shared_plots.js'
 import SortableTable from './SortableTable.js'
 import {cmpNumNullLast} from './util.js'
 
@@ -28,6 +28,12 @@ export default class AuthorStats extends Component {
                         cmpfunction: (a, b) => cmpNumNullLast(a.avg_rating_diff, b.avg_rating_diff)}
                 ]} defaultSort={{column: "avg_user_rating_2prec", mult: -1}}/>
                 </div>
+                <DotViolin data={{x: this.props.statistics.author_stats_list.map(a => a.num_books),
+                    text: this.props.statistics.author_stats_list.map(a => a.author)}}
+                           xaxis_title="# books by author" size="half"/>
+                <DotViolin data={{x: this.props.statistics.author_stats_list.map(a => a.avg_user_rating),
+                    text: this.props.statistics.author_stats_list.map(a => a.author)}}
+                           xaxis_title="your avg. rating" size="half"/>
                 <div className="clearfloat"/>
             </div>
         );

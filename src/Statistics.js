@@ -205,4 +205,19 @@ export default class Statistics {
             rating_diff_2prec: b.user_rating === null ? null : (b.user_rating - b.average_rating).toPrecision(2)
         }))
     }
+
+    get pages_and_title() {
+        const books_with_pages = this.data.filter(b => b.num_pages > 0);
+        return {
+            x: books_with_pages.map(b => b.num_pages),
+            text: books_with_pages.map(b => `${b.title} (${b.author})`)
+        };
+    }
+
+    get avgrating_and_title() {
+        const books_with_avg_rating = this.data.filter(b => b.average_rating > 0);
+        return{
+            x: books_with_avg_rating.map(b => b.average_rating),
+            text: books_with_avg_rating.map(b => `${b.title} (${b.author})`)}
+    }
 }
