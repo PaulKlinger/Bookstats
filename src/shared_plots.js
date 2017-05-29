@@ -165,7 +165,15 @@ export class DotViolin extends Component {
     render() {
         const sortedxs = this.props.data.x.slice().sort();
         const minx = sortedxs[0];
-        const slotsize = (sortedxs[Math.floor(sortedxs.length * 0.95)] - sortedxs[Math.floor(sortedxs.length * 0.05)]) / 100;
+
+        // Somewhat arbitrary algorithm to calculate "bin" size
+        // split 10th to 90th percentile region into bins
+        // such that for a flat distribution each bin contains 15 points
+        // this seems to give a nice picture for ~240 and ~1270 points
+        // TODO: maybe adjust based on plot height?
+
+        const interval_of_interest = (sortedxs[Math.floor(sortedxs.length * 0.90)] - sortedxs[Math.floor(sortedxs.length * 0.10)]);
+        const slotsize =  interval_of_interest / (0.8 * sortedxs.length / 15);
         const occupied = {};
         const ys = [];
 
