@@ -44,7 +44,7 @@ export default class RatingStats extends Component {
                     ]} defaultSort={{column: "rating_diff_2prec", mult: -1}}/>
                 </div>
                 <DotViolin data={this.props.statistics.avgrating_and_title}
-                           xaxis_title="avg. rating" size="full" title="avg. rating of books you read"/>
+                           xaxis_title="avg. rating" size="full" title="average rating of books you read"/>
                 <div className="clearfloat"/>
             </div>
         );
