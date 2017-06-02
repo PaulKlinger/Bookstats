@@ -30,7 +30,7 @@ export default class AuthorStats extends Component {
                 </div>
                 <DotViolin data={{x: this.props.statistics.author_stats_list.map(a => a.num_books),
                     text: this.props.statistics.author_stats_list.map(a => a.author)}}
-                           xaxis_title="# books by author" size="half"/>
+                           xaxis_title="# books read by author" size="half"/>
                 <DotViolin data={{x: this.props.statistics.author_stats_list.map(a => a.avg_user_rating),
                     text: this.props.statistics.author_stats_list.map(a => a.author)}}
                            xaxis_title="your avg. rating" size="half"/>
