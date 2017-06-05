@@ -87,13 +87,18 @@ export class Bar extends Component {
                 y: this.props.data.y
             }
         ];
-        let layout = {
-            margin: defaultMargins,
+        const margins = Object.assign({}, defaultMargins);
+        if (this.props.margin_bottom !== undefined) {
+            margins.b = this.props.margin_bottom;
+        }
+        const layout = {
+            margin: margins,
             title: this.props.title,
             autosize: true,
             xaxis: {
                 title: this.props.xaxis_title,
-                hoverformat: this.props.xaxis_hoverformat
+                hoverformat: this.props.xaxis_hoverformat,
+                tickangle: this.props.tickangle
             },
             yaxis: {title: this.props.yaxis_title}
         };

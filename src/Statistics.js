@@ -174,7 +174,19 @@ export default class Statistics {
             x: ["Mo", "Tu", "Wed", "Th", "Fr", "Sa", "Su"],
             y: [counts[0], counts[1], counts[2], counts[3], counts[4], counts[5], counts[6]]
         };
+    }
 
+    get genre_books() {
+        const genres = [];
+        this.data.filter(b => b.genres.length > 0).forEach(
+            b => b.genres.forEach(g => g.num > 10 ? genres.push(g.subgenres.join(">")) : null));
+        const counts = countEach(genres);
+        const keys = Object.keys(counts);
+        keys.sort((a, b) => counts[a] - counts[b]);
+        return {
+            x: keys,
+            y: keys.map(k => counts[k])
+        };
     }
 
     get author_stats() {
