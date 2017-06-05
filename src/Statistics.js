@@ -38,7 +38,7 @@ function nday_sliding_window(data, ndays, fillval) {
             nums.push(0);
         }
         if (vals.length === ndays) {
-            out.x.push(day.clone().add(Math.ceil((ndays - 1) / 2), "days").format("YYYY-MM-DD"));
+            out.x.push(day.clone().subtract(Math.ceil((ndays - 1) / 2), "days").format("YYYY-MM-DD"));
             out.y.push(mean(vals));
             out.y2.push(sum(nums));
             vals.shift();
