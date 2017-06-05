@@ -62,6 +62,7 @@ body {
     border: 10px solid #ffffff;
     background-color: #fff;
     margin: 5px;
+    max-width: 600px;
 }
 
 .options {
@@ -80,6 +81,8 @@ body {
 .float {
     float: left;
 }
+
+#overview {margin-top: 15px;}
 
 #number_stats li {
     text-align: left;

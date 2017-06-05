@@ -73,6 +73,8 @@ class App extends Component {
                                 (The export function can be found on <a href="https://www.goodreads.com/review/import">this
                                     page</a>,
                                 in the right column.)</p>
+                            <p>You can optionally use <a href="https://github.com/PaulKlinger/Enhance-GoodReads-Export">this tool</a> to add genre and multiple reading date
+                                 information to the export file.</p>
                             <p>All processing is done in the browser, your data never leaves your computer.</p>
                             <div id="file_select_and_processing">
                                 <div id="file_select" className="float">
@@ -115,11 +117,14 @@ class App extends Component {
                                 <div id="instructions">
                                     <p>Click and drag on any graph to zoom in, double click to zoom out again.</p>
                                     <p>Click on the table headings to change the sort order.</p>
-                                    <p>The .csv file exported from goodreads does not include the date you started
-                                        reading a
-                                        book,
-                                        so some of the graphs are not very accurate (e.g. pages read per day).</p>
-                                    <p>It also doesn't include reread dates, so each book will only appear once.</p>
+                                    {this.state.statistics.has_read_dates ? "" :
+                                        <p>The .csv file exported from goodreads does not include the date you started reading a book, or reread dates.
+                                        This means that each book is shown once on the timeline and some of the graphs are not very accurate (e.g. pages read per day).</p>
+                                    }
+                                    {this.state.statistics.has_read_dates ? "" :
+                                        <p>You can use <a href="https://github.com/PaulKlinger/Enhance-GoodReads-Export">this tool</a> to
+                                            add start and end dates (including rereading dates) to the export file</p>
+                                    }
                                 </div>
                                 <div className="clearfloat"/>
                             </div>
