@@ -7,7 +7,9 @@ import moment from 'moment'
 import Statistics from './Statistics'
 
 class Book {
-    constructor(title, author, isbn, user_rating, average_rating, num_pages, date_read, author_sort, publication_year) {
+    constructor(primary, title, author, isbn, user_rating, average_rating, num_pages, date_started, date_read, author_sort,
+                publication_year, genres) {
+        this.primary = primary;
         this.title = title;
         this.author = author;
         this.author_sort = author_sort;
@@ -15,8 +17,10 @@ class Book {
         this.user_rating = user_rating;
         this.average_rating = average_rating;
         this.num_pages = num_pages;
+        this.date_started = date_started;
         this.date_read = date_read;
         this.publication_year = publication_year;
+        this.genres = genres;
 
         this.book_moved = false; // Book date_read has been artificially moved (e.g. to spread Jan 1 books over year)
     }
@@ -44,6 +48,29 @@ function distribute_year(data) {
     }
 }
 
+
+function parseGenres(genres_string) {
+    const genres_sections = genres_string.split(";");
+
+    const genres = [];
+    genres_sections.forEach(s => {
+        const subgenres_num = s.split("|");
+        genres.push({subgenres: subgenres_num[0], num: subgenres_num[1]})
+    });
+    return genres;
+}
+
+
+function parseReadDates(read_dates_string) {
+    const read_dates = [];
+    read_dates_string.split(";").forEach(rd => {
+        const start_end = rd.split(",");
+        read_dates.push({start: moment(start_end[0], "YYYY-MM-DD"), end: moment(start_end[1], "YYYY-MM-DD")})
+    });
+    return read_dates;
+}
+
+
 export default function parseExport(file, options) {
     return new Promise((resolve, reject) => {
         Papa.parse(file,
@@ -57,28 +84,41 @@ export default function parseExport(file, options) {
                         && column_names.indexOf("Date Read") > -1)){
                         reject();
                     }
+                    const read_dates_index = column_names.indexOf("read_dates");
+                    const genres_index = column_names.indexOf("genres");
                     let data = [];
                     results.data.forEach(columns => {
                         if (columns[column_names.indexOf("Exclusive Shelf")] === "read") {
-                            data.push(
-                                new Book(
-                                    columns[column_names.indexOf("Title")], // title
-                                    columns[column_names.indexOf("Author")], // author
-                                    columns[column_names.indexOf("ISBN13")], // isbn
-                                    columns[column_names.indexOf("My Rating")] === "0" ? null : parseFloat(columns[7]), // user_rating
-                                    columns[column_names.indexOf("Average Rating")] === "0" ? null : parseFloat(columns[8]), // average_rating
-                                    columns[column_names.indexOf("Number of Pages")] === "" ? null : parseFloat(columns[11]), // num_pages
-                                    moment(columns[column_names.indexOf("Date Read")], "YYYY/MM/DD"), // date_read
-                                    columns[column_names.indexOf("Author l-f")], // author_sort
-                                    columns[column_names.indexOf("Original Publication Year")], // publication_year
-                                ))
+
+                            const genres = genres_index === -1 ? undefined : parseGenres(columns[genres_index]);
+                            const read_dates = read_dates_index === -1 ? []: parseReadDates(columns[read_dates_index]);
+                            if (read_dates.length === 0 && columns[column_names.indexOf("Date Read")] !== ""){
+                                read_dates.push({end: moment(columns[column_names.indexOf("Date Read")], "YYYY/MM/DD")})
+                            }
+                            read_dates.forEach((rd, i) =>{
+                                data.push(
+                                    new Book(
+                                        i === 0, // primary (1 book object per reading, only one primary one)
+                                        columns[column_names.indexOf("Title")], // title
+                                        columns[column_names.indexOf("Author")], // author
+                                        columns[column_names.indexOf("ISBN13")], // isbn
+                                        columns[column_names.indexOf("My Rating")] === "0" ? null : parseFloat(columns[7]), // user_rating
+                                        columns[column_names.indexOf("Average Rating")] === "0" ? null : parseFloat(columns[8]), // average_rating
+                                        columns[column_names.indexOf("Number of Pages")] === "" ? null : parseFloat(columns[11]), // num_pages
+                                        rd.start, // date_started
+                                        rd.end, // date_read
+                                        columns[column_names.indexOf("Author l-f")], // author_sort
+                                        columns[column_names.indexOf("Original Publication Year")], // publication_year
+                                        genres // genres
+                                    ))
+                            });
                         }
                     });
                     if (options.distribute_year) {
                         distribute_year(data);
                     }
                     if (data.length > 0) {
-                        resolve(new Statistics(data));
+                        resolve(new Statistics(data, read_dates_index > -1, genres_index > -1));
                     } else {
                         reject();
                     }

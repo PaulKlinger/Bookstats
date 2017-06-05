@@ -106,6 +106,9 @@ class App extends Component {
                                         <li>{this.state.statistics.data.length + " books,"}</li>
                                         <li>{`${this.state.statistics.data.filter(b => b.user_rating > 0).length} rated books,`}</li>
                                         <li>{`${this.state.statistics.data_valid_date_read.length} books with finish date,`}</li>
+                                        {(!this.state.statistics.has_read_dates) ? "" :
+                                            <li>{`${this.state.statistics.data.filter(b => b.date_started.isValid() && b.date_read.isValid()).length} books with start and finish date,`}</li>
+                                        }
                                         <li>{`by ${Object.keys(this.state.statistics.author_stats).length} authors.`}</li>
                                     </ul>
                                 </div>

@@ -51,9 +51,11 @@ function nday_sliding_window(data, ndays, fillval) {
 }
 
 export default class Statistics {
-    constructor(data) {
+    constructor(data, has_read_dates, has_genres) {
         this.data = data;
         this.data_valid_date_read = data.filter(b => b.date_read.isValid());
+        this.has_read_dates = has_read_dates;
+        this.has_genres = has_genres;
     }
 
     get user_rating_vs_average_rating() {
