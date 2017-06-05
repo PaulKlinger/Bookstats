@@ -4,7 +4,7 @@
 
 import moment from 'moment'
 
-import {isNum, mean, sum, countEach} from './util.js'
+import {isNum, mean, sum, countEach, meanStdDev} from './util.js'
 
 
 function nday_sliding_window(data, ndays, fillval) {
@@ -176,17 +176,43 @@ export default class Statistics {
         };
     }
 
+    get books_by_genre() {
+        if (this._books_by_genre === undefined) {
+            let genre_to_books = {};
+            this.data_primary.filter(b => b.genres !== undefined).forEach(b => {
+                b.genres.forEach(g => {
+                    if (g.num > 10) {
+                        if (!genre_to_books.hasOwnProperty(g.genre_string)) {
+                            genre_to_books[g.genre_string] = [];
+                        }
+                        genre_to_books[g.genre_string].push(b);
+                    }
+                });
+            });
+            this._books_by_genre = Object.keys(genre_to_books).map(k => ({genre: k, books: genre_to_books[k]}));
+            this._books_by_genre.sort((a, b) => a.books.length - b.books.length);
+        }
+        return this._books_by_genre;
+    }
+
     get genre_books() {
-        const genres = [];
-        this.data.filter(b => b.genres.length > 0).forEach(
-            b => b.genres.forEach(g => g.num > 10 ? genres.push(g.subgenres.join(">")) : null));
-        const counts = countEach(genres);
-        const keys = Object.keys(counts);
-        keys.sort((a, b) => counts[a] - counts[b]);
         return {
-            x: keys,
-            y: keys.map(k => counts[k])
+            x: this.books_by_genre.map(g => g.genre),
+            y: this.books_by_genre.map(g => g.books.length)
         };
+    }
+
+    get genre_ratings() {
+        const xs = [];
+        const ys = [];
+        const errors = [];
+        this.books_by_genre.slice(-20).forEach(g => {
+            const mean_std_dev = meanStdDev(g.books.filter(b => b.user_rating > 0).map(b => b.user_rating));
+            xs.push(mean_std_dev.mean);
+            errors.push(mean_std_dev.stddev);
+            ys.push(g.genre);
+        });
+        return {xs: xs, ys: ys, errors: errors};
     }
 
     get author_stats() {

@@ -178,44 +178,51 @@ export class TimeLinePlot extends Component {
     }
 }
 
+function calcViolinYs(xs, offset) {
+    const sortedxs = xs.slice().sort();
+    const minx = sortedxs[0];
+
+    // Somewhat arbitrary algorithm to calculate "bin" size
+    // split 10th to 90th percentile region into bins
+    // such that for a flat distribution each bin contains 15 points
+    // this seems to give a nice picture for ~240 and ~1270 points
+    // TODO: maybe adjust based on plot height?
+
+    const interval_of_interest = (sortedxs[Math.floor(sortedxs.length * 0.90)] - sortedxs[Math.floor(sortedxs.length * 0.10)]);
+    const slotsize =  interval_of_interest / (0.8 * sortedxs.length / 15);
+    const occupied = {};
+
+    const ys = [];
+
+    xs.forEach(x => {
+        let y = 0;
+        const slot = Math.floor((x - minx) / slotsize);
+        while (true){
+            if (!occupied.hasOwnProperty([slot, y])){
+                break;
+            }
+            y += 1;
+            if (!occupied.hasOwnProperty([slot, -y])){
+                y = -y;
+                break;
+            }
+        }
+        occupied[[slot, y]] = true;
+        ys.push(y + offset);
+    });
+    return ys;
+}
+
 export class DotViolin extends Component {
     render() {
-        const sortedxs = this.props.data.x.slice().sort();
-        const minx = sortedxs[0];
-
-        // Somewhat arbitrary algorithm to calculate "bin" size
-        // split 10th to 90th percentile region into bins
-        // such that for a flat distribution each bin contains 15 points
-        // this seems to give a nice picture for ~240 and ~1270 points
-        // TODO: maybe adjust based on plot height?
-
-        const interval_of_interest = (sortedxs[Math.floor(sortedxs.length * 0.90)] - sortedxs[Math.floor(sortedxs.length * 0.10)]);
-        const slotsize =  interval_of_interest / (0.8 * sortedxs.length / 15);
-        const occupied = {};
-        const ys = [];
-
-        this.props.data.x.forEach(x => {
-            let y = 0;
-            const slot = Math.floor((x - minx) / slotsize);
-            while (true){
-                if (!occupied.hasOwnProperty([slot, y])){
-                    break;
-                }
-                y += 1;
-                if (!occupied.hasOwnProperty([slot, -y])){
-                    y = -y;
-                    break;
-                }
-            }
-            occupied[[slot, y]] = true;
-            ys.push(y);
-        });
+        let ys = calcViolinYs(this.props.data.x, 0);
+        let xs = this.props.data.x;
 
         let data = [
             {
                 type: 'scattergl',
                 mode: 'markers',
-                x: this.props.data.x,
+                x: xs,
                 y: ys,
                 text: this.props.data.text,
                 hoverinfo: "x+text",
@@ -244,6 +251,87 @@ export class DotViolin extends Component {
         };
         return (
             <div className={"plot plot_dotviolin" + ((this.props === 'full') ? "" : "plot_half")}>
+                <PlotlyComponent plotly={Plotly} data={data} layout={layout} config={config}/>
+            </div>
+        );
+    }
+}
+
+export class MeanStdDev extends Component {
+    render() {
+        const margins = Object.assign({},defaultMargins);
+        margins.l = 150;
+        let data = [
+            {
+                type: 'scattergl',
+                mode: 'markers',
+                x: this.props.data.xs,
+                y: this.props.data.ys,
+                error_x: {
+                    visible: true,
+                    type: "array",
+                    array: this.props.data.errors
+                },
+                marker: {
+                    symbol: 'circle-dot',
+                    color: 'rgb(16, 32, 77)'
+                }
+            }
+        ];
+        let layout = {
+            margin: margins,
+            title: this.props.title,
+            autosize: true,
+            hovermode: 'closest',
+            xaxis: {
+                title: this.props.xaxis_title,
+                tickvals: this.props.tickvals,
+            },
+            yaxis: {
+                title: this.props.yaxis_title
+            }
+        };
+        let config = {
+            showLink: false,
+        };
+        return (
+            <div className="plot plot_meanstddev">
+                <PlotlyComponent plotly={Plotly} data={data} layout={layout} config={config}/>
+            </div>
+        );
+    }
+}
+
+export class BoxPlots extends Component {
+    render() {
+        let data = [];
+        this.props.data.forEach(d => {
+            data.push({
+                x: d.xs,
+                name: d.name,
+                type: "box",
+                boxmean: "sd"
+            });
+        });
+        let layout = {
+            margin: defaultMargins,
+            title: this.props.title,
+            height: (this.props.size === "full") ? 500 : 250,
+            width: 550,
+            hovermode: 'closest',
+            xaxis: {
+                title: this.props.xaxis_title,
+                zeroline: false
+            },
+            yaxis: {
+                visible: false
+            }
+        };
+        let config = {
+            showLink: false,
+        };
+        return (
+            <div className={"plot plot_box" + ((this.props === 'full') ? "" : "plot_half")}>
                 <PlotlyComponent plotly={Plotly} data={data} layout={layout} config={config}/>
             </div>
         );

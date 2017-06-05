@@ -26,9 +26,11 @@ export default class ReadingStats extends Component {
                 <Bar title="books read by publication year"
                      data={this.props.statistics.publication_year_bar}
                      xaxis_title="publication year" yaxis_title="# books read"/>
-                <Bar title="books read by genre"
+                {this.props.statistics.has_read_dates ?
+                    <Bar title="books read by genre"
                      data={this.props.statistics.genre_books}
                      yaxis_title="# books read" margin_bottom="150" margin_top="50" tickangle="-45"/>
+                        : ""}
                 <div className="clearfloat"/>
             </div>
         );

@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 
-import {ScatterPlot, Histogram, TimeLinePlot, DotViolin} from './shared_plots'
+import {ScatterPlot, Histogram, TimeLinePlot, DotViolin, MeanStdDev} from './shared_plots'
 import SortableTable from "./SortableTable"
 import {cmpNumNullLast} from "./util"
 
@@ -45,6 +45,10 @@ export default class RatingStats extends Component {
                 </div>
                 <DotViolin data={this.props.statistics.avgrating_and_title}
                            xaxis_title="avg. rating" size="full" title="average rating of books you read"/>
+                {this.props.statistics.has_genres ?
+                    <MeanStdDev data={this.props.statistics.genre_ratings} size="full" title="your average rating per genre"
+                            tickvals={[1,2,3,4,5]}/>
+                        : ""}
                 <div className="clearfloat"/>
             </div>
         );

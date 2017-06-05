@@ -35,6 +35,18 @@ export function mean(a) {
     return num > 0 ? total / num : null;
 }
 
+export function meanStdDev(a) {
+    const nums = a.filter(x => isNum(x));
+    const mean_value = mean(nums);
+    let sumDeltaSq = 0;
+    nums.forEach(x => {
+        sumDeltaSq += (x - mean_value) * (x - mean_value);
+    });
+    return {
+        mean: mean_value,
+        stddev: Math.sqrt(sumDeltaSq / (nums.length - 1))}
+}
+
 export function countNum(a) {
     return a.filter(x => isNum(x)).length;
 }

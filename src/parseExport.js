@@ -53,7 +53,9 @@ function parseGenres(genres_string) {
     const genres = [];
     genres_string.split(";").forEach(s => {
         const subgenres_num = s.split("|");
-        genres.push({subgenres: subgenres_num[0].split(","), num: subgenres_num[1]});
+        genres.push({subgenres: subgenres_num[0].split(","),
+            num: subgenres_num[1],
+            genre_string: subgenres_num[0].replace(",", ">")});
     });
     return genres;
 }
