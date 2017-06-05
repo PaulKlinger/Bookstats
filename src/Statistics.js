@@ -54,6 +54,7 @@ export default class Statistics {
     constructor(data, has_read_dates, has_genres) {
         this.data = data;
         this.data_valid_date_read = data.filter(b => b.date_read.isValid());
+        this.data_start_end_dates = this.data_valid_date_read.filter(b => b.date_started.isValid());
         this.data_primary = data.filter(b => b.primary);
         this.has_read_dates = has_read_dates;
         this.has_genres = has_genres;
@@ -126,9 +127,27 @@ export default class Statistics {
         const dots_x = [];
         const dots_y = [];
         const dots_text = [];
+
+        const pages_per_day_from_start_end = {};
+        this.data_start_end_dates.forEach(b => {
+            const day = b.date_started.clone();
+            const reading_days = b.date_read.diff(b.date_started, "days") + 1;
+            while (day.isSameOrBefore(b.date_read)) {
+                if (!pages_per_day_from_start_end.hasOwnProperty(day)) {
+                    pages_per_day_from_start_end[day] = 0;
+                }
+                pages_per_day_from_start_end[day] += b.num_pages / reading_days;
+                day.add(1, "days");
+            }
+        });
+
         this.books_by_date_read.forEach(d => {
             valid_data_books.push({date: d.date, val: d.books.length});
-            valid_data_pages.push({date: d.date, val: sum(d.books.map(b => b.num_pages))});
+            valid_data_pages.push({
+                date: d.date,
+                val: sum(d.books.filter(b => !b.date_started.isValid()).map(b => b.num_pages))
+                + (pages_per_day_from_start_end.hasOwnProperty(d.date) ? pages_per_day_from_start_end[d.date] : 0)
+            });
             d.books.forEach((b, i) => {
                 dots_x.push(d.date.format("YYYY-MM-DD"));
                 dots_y.push(i);
@@ -234,8 +253,9 @@ export default class Statistics {
 
     get avgrating_and_title() {
         const books_with_avg_rating = this.data_primary.filter(b => b.average_rating > 0);
-        return{
+        return {
             x: books_with_avg_rating.map(b => b.average_rating),
-            text: books_with_avg_rating.map(b => `${b.title} (${b.author})`)}
+            text: books_with_avg_rating.map(b => `${b.title} (${b.author})`)
+        }
     }
 }
