@@ -118,15 +118,30 @@ export default class Statistics {
     }
 
     get pages_read_31_day_sliding_window() {
-        let valid_data_pages = [];
-        let valid_data_books = [];
+        const valid_data_pages = [];
+        const valid_data_books = [];
+        const dots_x = [];
+        const dots_y = [];
+        const dots_text = [];
         this.books_by_date_read.forEach(d => {
             valid_data_books.push({date: d.date, val: d.books.length});
             valid_data_pages.push({date: d.date, val: sum(d.books.map(b => b.num_pages))});
+            d.books.forEach((b, i) => {
+                dots_x.push(d.date.format("YYYY-MM-DD"));
+                dots_y.push(i);
+                dots_text.push(`${b.title} (${b.author})`);
+            })
         });
+
+
         return {
             data1: nday_sliding_window(valid_data_pages, 61, 0),
-            data2: nday_sliding_window(valid_data_books, 61, 0)
+            data2: nday_sliding_window(valid_data_books, 61, 0),
+            dots_data: {
+                x: dots_x,
+                y: dots_y,
+                text: dots_text
+            }
         }
     }
 

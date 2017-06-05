@@ -150,6 +150,18 @@ export class TimeLinePlot extends Component {
             layout.legend = {x: 0, y:1};
         }
 
+        if (this.props.data.dots_data !== undefined) {
+            data.push({
+                type: "scattergl",
+                mode: "markers",
+                x: this.props.data.dots_data.x,
+                y: this.props.data.dots_data.y,
+                text: this.props.data.dots_data.text,
+                showlegend: false,
+                hoverinfo: "x+text"
+            })
+        }
+
         let config = {
             showLink: false,
         };
