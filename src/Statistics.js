@@ -54,13 +54,14 @@ export default class Statistics {
     constructor(data, has_read_dates, has_genres) {
         this.data = data;
         this.data_valid_date_read = data.filter(b => b.date_read.isValid());
+        this.data_primary = data.filter(b => b.primary);
         this.has_read_dates = has_read_dates;
         this.has_genres = has_genres;
     }
 
     get user_rating_vs_average_rating() {
         let out = {x: [], y: [], text: []};
-        this.data.forEach(book => {
+        this.data_primary.forEach(book => {
             if (book.user_rating > 0 && book.average_rating > 0) {
                 out.x.push(book.average_rating);
                 out.y.push(book.user_rating);
@@ -72,7 +73,7 @@ export default class Statistics {
 
     get user_rating_vs_num_pages() {
         let out = {x: [], y: [], text: []};
-        this.data.forEach(book => {
+        this.data_primary.forEach(book => {
             if (book.user_rating > 0 && book.num_pages > 0) {
                 out.y.push(book.user_rating);
                 out.x.push(book.num_pages);
@@ -83,7 +84,7 @@ export default class Statistics {
     }
 
     get publication_year_bar() {
-        let years = this.data.map(b => b.publication_year).filter(x => x > 0);
+        let years = this.data_primary.map(b => b.publication_year).filter(x => x > 0);
         const counts = countEach(years);
         return {x: Object.keys(counts).sort(), y: Object.keys(counts).sort().map(k => counts[k])};
     }
@@ -162,7 +163,7 @@ export default class Statistics {
             return this._author_stats
         }
         let author_books = {};
-        this.data.forEach(b => {
+        this.data_primary.forEach(b => {
             if (!author_books.hasOwnProperty(b.author)) {
                 author_books[b.author] = [];
             }
@@ -214,7 +215,7 @@ export default class Statistics {
     }
 
     get book_list() {
-        return this.data.map(b => ({
+        return this.data_primary.map(b => ({
             title: b.title, author: b.author, author_sort: b.author_sort,
             user_rating: b.user_rating, avg_rating: b.average_rating,
             avg_rating_2prec: b.average_rating.toPrecision(2),
@@ -224,7 +225,7 @@ export default class Statistics {
     }
 
     get pages_and_title() {
-        const books_with_pages = this.data.filter(b => b.num_pages > 0);
+        const books_with_pages = this.data_primary.filter(b => b.num_pages > 0);
         return {
             x: books_with_pages.map(b => b.num_pages),
             text: books_with_pages.map(b => `${b.title} (${b.author})`)
@@ -232,7 +233,7 @@ export default class Statistics {
     }
 
     get avgrating_and_title() {
-        const books_with_avg_rating = this.data.filter(b => b.average_rating > 0);
+        const books_with_avg_rating = this.data_primary.filter(b => b.average_rating > 0);
         return{
             x: books_with_avg_rating.map(b => b.average_rating),
             text: books_with_avg_rating.map(b => `${b.title} (${b.author})`)}
