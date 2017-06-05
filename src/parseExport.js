@@ -93,7 +93,9 @@ export default function parseExport(file, options) {
                             const genres = genres_index === -1 ? undefined : parseGenres(columns[genres_index]);
                             const read_dates = read_dates_index === -1 ? []: parseReadDates(columns[read_dates_index]);
                             if (read_dates.length === 0 && columns[column_names.indexOf("Date Read")] !== ""){
-                                read_dates.push({end: moment(columns[column_names.indexOf("Date Read")], "YYYY/MM/DD")})
+                                read_dates.push({
+                                    end: moment(columns[column_names.indexOf("Date Read")], "YYYY/MM/DD"),
+                                    start: moment.invalid()})
                             }
                             read_dates.forEach((rd, i) =>{
                                 data.push(
