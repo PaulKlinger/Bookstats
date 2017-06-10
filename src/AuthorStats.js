@@ -12,9 +12,9 @@ export default class AuthorStats extends Component {
     render() {
         return (
             <div className="AuthorStats">
-                <ScatterPlot title="# books read by author vs your average rating"
+                <ScatterPlot title="# books you read by author vs your average rating"
                              data={this.props.statistics.author_num_books_vs_avg_user_rating}
-                             xaxis_title="# books read by author" yaxis_title="your average rating"/>
+                             xaxis_title="# books you read by author" yaxis_title="your average rating"/>
 
                 <div className="plot plot_list">
                 <SortableTable data={this.props.statistics.author_stats_list} columns={[
@@ -30,7 +30,7 @@ export default class AuthorStats extends Component {
                 </div>
                 <DotViolin data={{x: this.props.statistics.author_stats_list.map(a => a.num_books),
                     text: this.props.statistics.author_stats_list.map(a => a.author)}}
-                           xaxis_title="# books read by author" size="half"/>
+                           xaxis_title="# books you read by author" size="half"/>
                 <DotViolin data={{x: this.props.statistics.author_stats_list.map(a => a.avg_user_rating),
                     text: this.props.statistics.author_stats_list.map(a => a.author)}}
                            xaxis_title="your avg. rating" size="half"/>
