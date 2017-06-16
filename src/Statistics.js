@@ -60,6 +60,13 @@ export default class Statistics {
         this.has_genres = has_genres;
     }
 
+    get total_pages() {
+        if (this._total_pages === undefined){
+            this._total_pages = sum(this.data.map(b => b.num_pages));
+        }
+        return this._total_pages;
+    }
+
     get user_rating_vs_average_rating() {
         let out = {x: [], y: [], text: []};
         this.data_primary.forEach(book => {

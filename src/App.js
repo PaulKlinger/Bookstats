@@ -106,6 +106,10 @@ class App extends Component {
                                     Found
                                     <ul>
                                         <li>{this.state.statistics.data.length + " books,"}</li>
+                                        <li>containing {this.state.statistics.total_pages.toLocaleString()} pages
+                                            ({this.state.statistics.data.filter(b => !(b.num_pages > 0)).length} books without # pages)
+                                        </li>
+                                        <li>or approximately {(this.state.statistics.total_pages * 270).toLocaleString()} words (270 words/page),</li>
                                         <li>{`${this.state.statistics.data.filter(b => b.user_rating > 0).length} rated books,`}</li>
                                         <li>{`${this.state.statistics.data_valid_date_read.length} books with finish date,`}</li>
                                         {(!this.state.statistics.has_read_dates) ? "" :
