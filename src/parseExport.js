@@ -75,6 +75,7 @@ export default function parseExport(file, options) {
     return new Promise((resolve, reject) => {
         Papa.parse(file,
             {
+                download: true,
                 complete: (results) => {
                     const column_names = results.data.shift();
                     // Just check some columns to see if this is a goodreads csv (not exhaustive)
@@ -82,7 +83,7 @@ export default function parseExport(file, options) {
                         && column_names.indexOf("Author") > -1
                         && column_names.indexOf("Exclusive Shelf") > -1
                         && column_names.indexOf("Date Read") > -1)){
-                        reject();
+                        reject("Error: Not a Goodreads export file.");
                     }
                     const read_dates_index = column_names.indexOf("read_dates");
                     const genres_index = column_names.indexOf("genres");
@@ -122,7 +123,7 @@ export default function parseExport(file, options) {
                     if (data.length > 0) {
                         resolve(new Statistics(data, read_dates_index > -1, genres_index > -1));
                     } else {
-                        reject();
+                        reject("Error: No books found.");
                     }
                 }
             });

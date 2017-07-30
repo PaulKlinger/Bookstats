@@ -4,6 +4,7 @@ import ReactGA from 'react-ga'
 import logo from './img/logo.png';
 import error_smiley from './img/error_smiley.png'
 import './css/App.css';
+import demo_library from './export_enhanced_full.csv'
 
 import StatsComponent from "./StatsComponent";
 import parseExport from "./parseExport"
@@ -14,11 +15,17 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {file: null, distribute_year: true, statistics: null,processing: false, error: false};
+        this.show_demo = this.show_demo.bind(this);
         this.handle_options = this.handle_options.bind(this);
         this.calc_statistics = this.calc_statistics.bind(this);
 
         ReactGA.initialize('UA-133792-4');
         ReactGA.pageview(window.location.pathname);
+    }
+
+    show_demo(e) {
+        e.preventDefault();
+        this.setState({file: demo_library, statistics: null}, this.calc_statistics);
     }
 
     handle_options(e) {
@@ -47,7 +54,8 @@ class App extends Component {
                         value: statistics.data.length
                     });
                     self.setState({statistics: statistics, processing: false});
-                }, () => {
+                }, (reason) => {
+                    console.log(reason);
                     self.setState({statistics: null, processing: false, error: true})
                 });
             });
@@ -82,6 +90,10 @@ class App extends Component {
                                            ref={(ref) => this.fileUpload = ref}
                                            onChange={this.handle_options}
                                            disabled={this.state.processing}/>
+                                    <br />
+                                    <span className="link_button" id="demo_link"
+                                       style={{display: this.state.processing ? "none" : "inline"}}
+                                       onClick={this.show_demo}>(show demo)</span>
                                 </div>
                                 <div id="processing" className="float"
                                      style={{display: this.state.processing ? "block" : "none"}}>
