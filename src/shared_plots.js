@@ -347,7 +347,7 @@ export class DotViolin extends Component {
             showLink: false,
         };
         return (
-            <div className={"plot plot_dotviolin " + ((this.props === 'full') ? "" : "plot_half")}>
+            <div className={"plot plot_dotviolin " + ((this.props.size === 'full') ? "" : "plot_half")}>
                 <PlotlyComponent plotly={Plotly} data={data} layout={layout} config={config}/>
             </div>
         );
