@@ -245,7 +245,8 @@ export default class Statistics {
                 num_books: author_books[a].length,
                 avg_rating_diff: mean(author_books[a].filter(b => b.user_rating > 0).map(b => b.user_rating - b.average_rating)),
                 avg_rating_diff_2prec: null,
-                author_sort: author_books[a][0].author_sort
+                author_sort: author_books[a][0].author_sort,
+                total_pages: sum(author_books[a].map(b => b.num_pages)),
             };
             if (isNum(author_stats[a].avg_user_rating)) {
                 author_stats[a].avg_user_rating_2prec = author_stats[a].avg_user_rating.toPrecision(2);
@@ -262,6 +263,7 @@ export default class Statistics {
             author: a,
             author_sort: this.author_stats[a].author_sort,
             num_books: this.author_stats[a].num_books,
+            total_pages: this.author_stats[a].total_pages,
             avg_user_rating_2prec: this.author_stats[a].avg_user_rating_2prec,
             avg_user_rating: this.author_stats[a].avg_user_rating,
             avg_rating_diff: this.author_stats[a].avg_rating_diff,

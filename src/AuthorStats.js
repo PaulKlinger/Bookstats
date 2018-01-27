@@ -22,10 +22,12 @@ export default class AuthorStats extends Component {
                         cmpfunction: (a, b) => a.author_sort < b.author_sort ? -1 : a.author_sort > b.author_sort ? 1 : 0},
                     {column: "num_books", name: "# Books",
                         cmpfunction: (a, b) => a.num_books - b.num_books},
-                    {column: "avg_user_rating_2prec", name: "Your Avg. ★",
+                    {column: "total_pages", name: "Total # Pages",
+                        cmpfunction: (a, b) => a.total_pages - b.total_pages},
+                    {column: "avg_user_rating_2prec", name: "Your Avg. ★",
                         cmpfunction: (a, b) => cmpNumNullLast(a.avg_user_rating, b.avg_user_rating)},
-                    {column: "avg_rating_diff_2prec", name: "Your ★ -  Avg. ★",
-                        cmpfunction: (a, b) => cmpNumNullLast(a.avg_rating_diff, b.avg_rating_diff)}
+                    {column: "avg_rating_diff_2prec", name: "Your ★ -  Avg. ★",
+                        cmpfunction: (a, b) => cmpNumNullLast(a.avg_rating_diff, b.avg_rating_diff)},
                 ]} defaultSort={{column: "avg_user_rating_2prec", mult: -1}}/>
                 </div>
                 <DotViolin data={{x: this.props.statistics.author_stats_list.map(a => a.num_books),
