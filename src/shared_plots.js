@@ -196,7 +196,7 @@ export class TimeLineSlidingWindowPlot extends Component {
     }
 
     change_sliding_window(event) {
-        this.setState({ndays: event.target.valueAsNumber});
+        this.setState({ndays: parseInt(event.target.value, 10)});
     }
 
     render() {
