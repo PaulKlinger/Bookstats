@@ -155,7 +155,7 @@ export default class Statistics {
         });
 
         Object.keys(this.books_by_date_read).forEach(d => {
-            valid_data_books.push({date: moment(d), val: this.books_by_date_read[d].books.length});
+            valid_data_books.push({date: moment(d), val: this.books_by_date_read[d].books.length * 7});
             valid_data_pages.push({
                 date: moment(d),
                 val: sum(this.books_by_date_read[d].books.filter(b => !b.date_started.isValid()).map(b => b.num_pages))
