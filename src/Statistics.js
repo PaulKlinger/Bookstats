@@ -64,7 +64,7 @@ export default class Statistics {
     }
 
     get total_pages() {
-        if (this._total_pages === undefined){
+        if (this._total_pages === undefined) {
             this._total_pages = sum(this.data.map(b => b.num_pages));
         }
         return this._total_pages;
@@ -115,17 +115,17 @@ export default class Statistics {
                 }
                 date_to_books[b.date_read].books.push(b);
             });
-            this._books_by_date_read = Object.keys(date_to_books).map(k => date_to_books[k]);
+            this._books_by_date_read = date_to_books;
         }
         return this._books_by_date_read;
     }
 
     get user_rating_vs_date_read() {
         let valid_data = [];
-        this.books_by_date_read.forEach(d => {
-            let ratings = d.books.map(b => b.user_rating).filter(x => x > 0);
+        Object.keys(this.books_by_date_read).forEach(d => {
+            let ratings = this.books_by_date_read[d].books.map(b => b.user_rating).filter(x => x > 0);
             if (ratings.length > 0) {
-                valid_data.push({date: d.date, val: mean(ratings), num: ratings.length});
+                valid_data.push({date: moment(d), val: mean(ratings), num: ratings.length});
             }
         });
         return {data1: valid_data};
@@ -146,20 +146,23 @@ export default class Statistics {
                 if (!pages_per_day_from_start_end.hasOwnProperty(day)) {
                     pages_per_day_from_start_end[day] = 0;
                 }
+                if (!this.books_by_date_read.hasOwnProperty(day)) {
+                    this.books_by_date_read[day] = {books: [], date: day};
+                }
                 pages_per_day_from_start_end[day] += b.num_pages / reading_days;
                 day.add(1, "days");
             }
         });
 
-        this.books_by_date_read.forEach(d => {
-            valid_data_books.push({date: d.date, val: d.books.length});
+        Object.keys(this.books_by_date_read).forEach(d => {
+            valid_data_books.push({date: moment(d), val: this.books_by_date_read[d].books.length});
             valid_data_pages.push({
-                date: d.date,
-                val: sum(d.books.filter(b => !b.date_started.isValid()).map(b => b.num_pages))
-                + (pages_per_day_from_start_end.hasOwnProperty(d.date) ? pages_per_day_from_start_end[d.date] : 0)
+                date: moment(d),
+                val: sum(this.books_by_date_read[d].books.filter(b => !b.date_started.isValid()).map(b => b.num_pages))
+                + (pages_per_day_from_start_end.hasOwnProperty(d) ? pages_per_day_from_start_end[d] : 0)
             });
-            d.books.forEach((b, i) => {
-                dots_x.push(d.date.format("YYYY-MM-DD"));
+            this.books_by_date_read[d].books.forEach((b, i) => {
+                dots_x.push(moment(d).format("YYYY-MM-DD"));
                 dots_y.push(i);
                 dots_text.push(`${b.title} (${b.author})`);
             })
