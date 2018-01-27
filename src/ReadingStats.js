@@ -1,9 +1,9 @@
 /**
  * Created by Paul on 2017-05-21.
  */
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
-import {Bar, TimeLinePlot, DotViolin} from './shared_plots.js'
+import {Bar, TimeLineSlidingWindowPlot, DotViolin} from './shared_plots.js'
 
 
 export default class ReadingStats extends Component {
@@ -12,11 +12,12 @@ export default class ReadingStats extends Component {
             <div className="ReadingStats">
                 <Bar title="books read per month" data={this.props.statistics.months_books_read_bar}
                      xaxis_title="Month" yaxis_title="# books read" xaxis_hoverformat="%B %Y"/>
-                <TimeLinePlot title="books / pages read per day, 2 month moving average"
-                              data={this.props.statistics.pages_read_31_day_sliding_window}
-                              yaxis_title="pages read / day" y2_type="line"
-                              yaxis2_title="books read / day"
-                              line_1_legend="pages" line_2_legend="books"/>
+                <TimeLineSlidingWindowPlot title="books / pages read per day"
+                                           data={this.props.statistics.books_pages_read}
+                                           yaxis_title="pages read / day" y2_type="line"
+                                           yaxis2_title="books read / day"
+                                           line_1_legend="pages" line_2_legend="books"
+                                           default_ndays={62} fillval={0}/>
                 <Bar title="# books finished by weekday"
                      data={this.props.statistics.weekday_finish}
                      xaxis_title="weekday of finish date" yaxis_title="# of books"/>
@@ -28,9 +29,9 @@ export default class ReadingStats extends Component {
                      xaxis_title="publication year" yaxis_title="# books read"/>
                 {this.props.statistics.has_read_dates ?
                     <Bar title="books read by genre"
-                     data={this.props.statistics.genre_books}
-                     yaxis_title="# books read" margin_bottom="150" margin_top="50" tickangle="-45"/>
-                        : ""}
+                         data={this.props.statistics.genre_books}
+                         yaxis_title="# books read" margin_bottom="150" margin_top="50" tickangle="-45"/>
+                    : ""}
                 <div className="clearfloat"/>
             </div>
         );

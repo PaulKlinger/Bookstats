@@ -4,7 +4,8 @@
 
 import React, {Component} from 'react';
 import PlotlyComponent from './PlotlyComponent';
-import Plotly from 'plotly.js/dist/plotly-cartesian'
+import Plotly from 'plotly.js/dist/plotly-cartesian';
+import {nday_sliding_window} from "./Statistics.js";
 
 let defaultMargins = {l: 50, r: 50, t: 80, b: 50};
 
@@ -152,7 +153,7 @@ export class TimeLinePlot extends Component {
                 overlaying: 'y' //???
             };
             layout.showlegend = true;
-            layout.legend = {x: 0, y:1};
+            layout.legend = {x: 0, y: 1};
         }
 
         if (this.props.data.dots_data !== undefined) {
@@ -178,6 +179,102 @@ export class TimeLinePlot extends Component {
     }
 }
 
+export class TimeLineSlidingWindowPlot extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            ndays: props.default_ndays,
+        };
+        this.change_sliding_window = this.change_sliding_window.bind(this);
+        this.handle_key = this.handle_key.bind(this);
+    }
+
+    handle_key(event) {
+        if (event.key === 'Enter') {
+            event.target.blur();
+        }
+    }
+
+    change_sliding_window(event) {
+        this.setState({ndays: event.target.valueAsNumber});
+    }
+
+    render() {
+        let raw_data_1 = nday_sliding_window(this.props.data.data1, this.state.ndays, this.props.fillval);
+        let raw_data_2 = nday_sliding_window(this.props.data.data2, this.state.ndays, this.props.fillval);
+
+        let data = [
+            {
+                type: 'scattergl',
+                mode: 'line',
+                name: this.props.line_1_legend,
+                x: raw_data_1.x,
+                y: raw_data_1.y,
+                yaxis: 'y1'
+            }
+        ];
+        let layout = {
+            margin: {
+                l: 50,
+                r: 50,
+                b: 20,
+                t: 40,
+                pad: 4
+            },
+            title: null,
+            autosize: true,
+            hovermode: 'closest',
+            yaxis: {
+                title: this.props.yaxis_title
+            }
+        };
+        if (!(raw_data_2 === undefined)) {
+            const y2_type = this.props.y2_type === undefined ? "bar" : this.props.y2_type;
+            data.push({
+                type: 'scattergl',
+                mode: y2_type,
+                x: raw_data_2.x,
+                y: raw_data_2.y,
+                yaxis: 'y2',
+                name: this.props.line_2_legend
+            });
+            layout.yaxis2 = {
+                side: 'right',
+                title: this.props.yaxis2_title,
+                overlaying: 'y' //???
+            };
+            layout.showlegend = true;
+            layout.legend = {x: 0, y: 1};
+        }
+
+        if (this.props.data.dots_data !== undefined) {
+            data.push({
+                type: "scattergl",
+                mode: "markers",
+                x: this.props.data.dots_data.x,
+                y: this.props.data.dots_data.y,
+                text: this.props.data.dots_data.text,
+                showlegend: false,
+                hoverinfo: "x+text"
+            })
+        }
+
+        let config = {
+            showLink: false,
+        };
+        return (
+            <div className="plot plot_timeline_sliding_window">
+                <span>{this.props.title},
+                    <input type="number" min="0" onBlur={this.change_sliding_window} onKeyPress={this.handle_key}
+                           defaultValue={this.state.ndays}
+                           style={{width: "3em", marginLeft: "5px", marginRight: "5px"}}/>
+                    day sliding window</span>
+                <PlotlyComponent plotly={Plotly} data={data} layout={layout} config={config}/>
+            </div>
+        );
+    }
+}
+
 function calcViolinYs(xs, offset) {
     const sortedxs = xs.slice().sort();
     const minx = sortedxs[0];
@@ -189,7 +286,7 @@ function calcViolinYs(xs, offset) {
     // TODO: maybe adjust based on plot height?
 
     const interval_of_interest = (sortedxs[Math.floor(sortedxs.length * 0.90)] - sortedxs[Math.floor(sortedxs.length * 0.10)]);
-    const slotsize =  interval_of_interest / (0.8 * sortedxs.length / 15);
+    const slotsize = interval_of_interest / (0.8 * sortedxs.length / 15);
     const occupied = {};
 
     const ys = [];
@@ -197,12 +294,12 @@ function calcViolinYs(xs, offset) {
     xs.forEach(x => {
         let y = 0;
         const slot = Math.floor((x - minx) / slotsize);
-        while (true){
-            if (!occupied.hasOwnProperty([slot, y])){
+        while (true) {
+            if (!occupied.hasOwnProperty([slot, y])) {
                 break;
             }
             y += 1;
-            if (!occupied.hasOwnProperty([slot, -y])){
+            if (!occupied.hasOwnProperty([slot, -y])) {
                 y = -y;
                 break;
             }
@@ -235,7 +332,7 @@ export class DotViolin extends Component {
         let layout = {
             margin: {t: this.props.title === undefined ? 0 : 50, l: 50, r: 50, b: 40},
             title: this.props.title,
-            height: (this.props.size === "full") ? 500 : 250,
+            height: (this.props.size === "full") ? 500 : 235,
             width: 550,
             hovermode: 'closest',
             xaxis: {
@@ -250,7 +347,7 @@ export class DotViolin extends Component {
             showLink: false,
         };
         return (
-            <div className={"plot plot_dotviolin" + ((this.props === 'full') ? "" : "plot_half")}>
+            <div className={"plot plot_dotviolin " + ((this.props === 'full') ? "" : "plot_half")}>
                 <PlotlyComponent plotly={Plotly} data={data} layout={layout} config={config}/>
             </div>
         );
@@ -259,7 +356,7 @@ export class DotViolin extends Component {
 
 export class MeanStdDev extends Component {
     render() {
-        const margins = Object.assign({},defaultMargins);
+        const margins = Object.assign({}, defaultMargins);
         margins.l = 150;
         let data = [
             {

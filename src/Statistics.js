@@ -7,11 +7,16 @@ import moment from 'moment'
 import {isNum, mean, sum, countEach, meanStdDev} from './util.js'
 
 
-function nday_sliding_window(data, ndays, fillval) {
+export function nday_sliding_window(data, ndays, fillval) {
     // calculates mean in sliding window of width ndays
     // data = [{date: *moment*, val: *value*, num: *number of aggregated data points*},...]
     // fillval is the value to assign days with no data (if null they are ignored, 0 they are respected for mean calc)
     // out.y2 total number of datapoints in sliding window if num is given
+
+    let out = {x: [], y: [], y2: []};
+    if (data === undefined) {
+        return out;
+    }
 
     let daydata = {};
     data.forEach(d => {
@@ -20,8 +25,6 @@ function nday_sliding_window(data, ndays, fillval) {
 
     let min = moment.min(data.map(d => d.date));
     let max = moment.max(data.map(d => d.date));
-
-    let out = {x: [], y: [], y2: []};
 
     let day = min.clone();
     let vals = [];
@@ -117,7 +120,7 @@ export default class Statistics {
         return this._books_by_date_read;
     }
 
-    get user_rating_vs_date_read_sliding_window() {
+    get user_rating_vs_date_read() {
         let valid_data = [];
         this.books_by_date_read.forEach(d => {
             let ratings = d.books.map(b => b.user_rating).filter(x => x > 0);
@@ -125,10 +128,10 @@ export default class Statistics {
                 valid_data.push({date: d.date, val: mean(ratings), num: ratings.length});
             }
         });
-        return {data1: nday_sliding_window(valid_data, 61, null)};
+        return {data1: valid_data};
     }
 
-    get pages_read_31_day_sliding_window() {
+    get books_pages_read() {
         const valid_data_pages = [];
         const valid_data_books = [];
         const dots_x = [];
@@ -164,8 +167,8 @@ export default class Statistics {
 
 
         return {
-            data1: nday_sliding_window(valid_data_pages, 61, 0),
-            data2: nday_sliding_window(valid_data_books, 61, 0),
+            data1: valid_data_pages,
+            data2: valid_data_books,
             dots_data: {
                 x: dots_x,
                 y: dots_y,

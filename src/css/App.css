@@ -106,7 +106,7 @@ body {
 .plot {
     float: left;
     width: 590px;
-    max-height: 500px;
+    height: 500px;
     border-radius: 10px;
     border: 10px solid #ffffff;
     background-color: #fff;
@@ -118,7 +118,7 @@ body {
 }
 
 .plot_half {
-    height: 250px;
+    height: 235px !important;
 }
 
 .section-title {
