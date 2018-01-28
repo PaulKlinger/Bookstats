@@ -24,9 +24,9 @@ export default class ReadingStats extends Component {
                 <DotViolin size="full" title="books read by number of pages"
                            data={this.props.statistics.pages_and_title}
                            xaxis_title="# pages"/>
-                <Bar title="books read by publication year"
-                     data={this.props.statistics.publication_year_bar}
-                     xaxis_title="publication year" yaxis_title="# books read"/>
+                <DotViolin size="full" title="books read by publication year"
+                           data={this.props.statistics.publication_year_title}
+                           xaxis_title={null} slotsize={1} oneside={true}/>
                 {this.props.statistics.has_read_dates ?
                     <Bar title="books read by genre"
                          data={this.props.statistics.genre_books}

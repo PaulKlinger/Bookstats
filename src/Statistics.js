@@ -100,6 +100,16 @@ export default class Statistics {
         return {x: Object.keys(counts).sort(), y: Object.keys(counts).sort().map(k => counts[k])};
     }
 
+    get publication_year_title() {
+        let years = [];
+        let titles = [];
+        this.data_primary.filter(b => b.publication_year > 0).forEach(b => {
+            years.push(b.publication_year);
+            titles.push(`${b.title} (${b.author})`);
+        });
+        return {x: years, text: titles};
+    }
+
     get months_books_read_bar() {
         const months = this.data_valid_date_read.map(b => b.date_read.clone().startOf("month").add(1, "day").toISOString());
         const counts = countEach(months);

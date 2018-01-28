@@ -275,33 +275,37 @@ export class TimeLineSlidingWindowPlot extends Component {
     }
 }
 
-function calcViolinYs(xs, offset) {
+function calcViolinYs(xs, offset, slotsize, oneside) {
     const sortedxs = xs.slice().sort();
     const minx = sortedxs[0];
 
-    // Somewhat arbitrary algorithm to calculate "bin" size
-    // split 10th to 90th percentile region into bins
-    // such that for a flat distribution each bin contains 15 points
-    // this seems to give a nice picture for ~240 and ~1270 points
-    // TODO: maybe adjust based on plot height?
+    if (slotsize === undefined) {
+        // Somewhat arbitrary algorithm to calculate "bin" size
+        // split 10th to 90th percentile region into bins
+        // such that for a flat distribution each bin contains 15 points
+        // this seems to give a nice picture for ~240 and ~1270 points
+        // TODO: maybe adjust based on plot height?
 
-    const interval_of_interest = (sortedxs[Math.floor(sortedxs.length * 0.90)] - sortedxs[Math.floor(sortedxs.length * 0.10)]);
-    const slotsize = interval_of_interest / (0.8 * sortedxs.length / 15);
+        const interval_of_interest = (sortedxs[Math.floor(sortedxs.length * 0.90)] - sortedxs[Math.floor(sortedxs.length * 0.10)]);
+        slotsize = interval_of_interest / (0.8 * sortedxs.length / 15);
+    }
     const occupied = {};
 
     const ys = [];
 
     xs.forEach(x => {
-        let y = 0;
+        let y = oneside ? 1 : 0;
         const slot = Math.floor((x - minx) / slotsize);
         while (true) {
             if (!occupied.hasOwnProperty([slot, y])) {
                 break;
             }
             y += 1;
-            if (!occupied.hasOwnProperty([slot, -y])) {
-                y = -y;
-                break;
+            if (!oneside) {
+                if (!occupied.hasOwnProperty([slot, -y])) {
+                    y = -y;
+                    break;
+                }
             }
         }
         occupied[[slot, y]] = true;
@@ -312,7 +316,7 @@ function calcViolinYs(xs, offset) {
 
 export class DotViolin extends Component {
     render() {
-        let ys = calcViolinYs(this.props.data.x, 0);
+        let ys = calcViolinYs(this.props.data.x, 0, this.props.slotsize, this.props.oneside);
         let xs = this.props.data.x;
 
         let data = [
@@ -340,7 +344,8 @@ export class DotViolin extends Component {
                 zeroline: false
             },
             yaxis: {
-                visible: false
+                dtick: 5,
+                visible: !!this.props.oneside,
             }
         };
         let config = {
