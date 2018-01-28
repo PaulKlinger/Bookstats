@@ -120,10 +120,10 @@ export default class Statistics {
         if (this._books_by_date_read === undefined) {
             let date_to_books = {};
             this.data_valid_date_read.forEach(b => {
-                if (!date_to_books.hasOwnProperty(b.date_read)) {
-                    date_to_books[b.date_read] = {date: b.date_read, books: []};
+                if (!date_to_books.hasOwnProperty(+b.date_read)) {
+                    date_to_books[+b.date_read] = {date: b.date_read, books: []};
                 }
-                date_to_books[b.date_read].books.push(b);
+                date_to_books[+b.date_read].books.push(b);
             });
             this._books_by_date_read = date_to_books;
         }
@@ -135,7 +135,7 @@ export default class Statistics {
         Object.keys(this.books_by_date_read).forEach(d => {
             let ratings = this.books_by_date_read[d].books.map(b => b.user_rating).filter(x => x > 0);
             if (ratings.length > 0) {
-                valid_data.push({date: moment(d), val: mean(ratings), num: ratings.length});
+                valid_data.push({date: moment(+d), val: mean(ratings), num: ratings.length});
             }
         });
         return {data1: valid_data};
@@ -153,26 +153,26 @@ export default class Statistics {
             const day = b.date_started.clone();
             const reading_days = b.date_read.diff(b.date_started, "days") + 1;
             while (day.isSameOrBefore(b.date_read)) {
-                if (!pages_per_day_from_start_end.hasOwnProperty(day)) {
-                    pages_per_day_from_start_end[day] = 0;
+                if (!pages_per_day_from_start_end.hasOwnProperty(+day)) {
+                    pages_per_day_from_start_end[+day] = 0;
                 }
-                if (!this.books_by_date_read.hasOwnProperty(day)) {
-                    this.books_by_date_read[day] = {books: [], date: day};
+                if (!this.books_by_date_read.hasOwnProperty(+day)) {
+                    this.books_by_date_read[+day] = {books: [], date: day};
                 }
-                pages_per_day_from_start_end[day] += b.num_pages / reading_days;
+                pages_per_day_from_start_end[+day] += b.num_pages / reading_days;
                 day.add(1, "days");
             }
         });
 
         Object.keys(this.books_by_date_read).forEach(d => {
-            valid_data_books.push({date: moment(d), val: this.books_by_date_read[d].books.length * 7});
+            valid_data_books.push({date: moment(+d), val: this.books_by_date_read[d].books.length * 7});
             valid_data_pages.push({
-                date: moment(d),
+                date: moment(+d),
                 val: sum(this.books_by_date_read[d].books.filter(b => !b.date_started.isValid()).map(b => b.num_pages))
                 + (pages_per_day_from_start_end.hasOwnProperty(d) ? pages_per_day_from_start_end[d] : 0)
             });
             this.books_by_date_read[d].books.forEach((b, i) => {
-                dots_x.push(moment(d).format("YYYY-MM-DD"));
+                dots_x.push(moment(+d).format("YYYY-MM-DD"));
                 dots_y.push(i);
                 dots_text.push(`${b.title} (${b.author})`);
             })
