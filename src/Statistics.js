@@ -101,11 +101,11 @@ export default class Statistics {
     }
 
     get publication_year_title() {
-        let years = [];
         let titles = [];
+        const years = this.data_primary.filter(b => b.publication_year > 0).map(b => b.publication_year);
+        const yearCounts = countEach(years);
         this.data_primary.filter(b => b.publication_year > 0).forEach(b => {
-            years.push(b.publication_year);
-            titles.push(`${b.title} (${b.author})`);
+            titles.push(`${yearCounts[b.publication_year]}<br />${b.title} (${b.author})`);
         });
         return {x: years, text: titles};
     }
