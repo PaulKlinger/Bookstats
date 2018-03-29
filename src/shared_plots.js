@@ -200,8 +200,10 @@ export class TimeLineSlidingWindowPlot extends Component {
     }
 
     render() {
-        let raw_data_1 = nday_sliding_window(this.props.data.data1, this.state.ndays, this.props.fillval);
-        let raw_data_2 = nday_sliding_window(this.props.data.data2, this.state.ndays, this.props.fillval);
+        let raw_data_1 = nday_sliding_window(this.props.data.data1, this.state.ndays,
+            this.props.fillval_1, this.props.aggregation_1);
+        let raw_data_2 = nday_sliding_window(this.props.data.data2, this.state.ndays,
+            this.props.fillval_2, this.props.aggregation_2);
 
         let data = [
             {

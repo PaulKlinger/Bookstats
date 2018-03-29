@@ -4,10 +4,10 @@
 
 import moment from 'moment'
 
-import {isNum, mean, sum, countEach, meanStdDev} from './util.js'
+import {isNum, mean, sum, countEach, meanStdDev, weighted_mean, sum_with_multiplicity} from './util.js'
 
 
-export function nday_sliding_window(data, ndays, fillval) {
+export function nday_sliding_window(data, ndays, fillval, aggregation) {
     // calculates mean in sliding window of width ndays
     // data = [{date: *moment*, val: *value*, num: *number of aggregated data points*},...]
     // fillval is the value to assign days with no data (if null they are ignored, 0 they are respected for mean calc)
@@ -17,10 +17,19 @@ export function nday_sliding_window(data, ndays, fillval) {
     if (data === undefined) {
         return out;
     }
+    let aggregation_func;
+    if (aggregation === "mean") {
+        aggregation_func = weighted_mean;
+    } else if (aggregation === "sum") {
+        aggregation_func = sum_with_multiplicity;
+    } else {
+        console.log("Unknown aggregation: " + aggregation);
+        return null
+    }
 
     let daydata = {};
     data.forEach(d => {
-        daydata[d.date] = d
+        daydata[+d.date] = d
     });
 
     let min = moment.min(data.map(d => d.date));
@@ -31,18 +40,17 @@ export function nday_sliding_window(data, ndays, fillval) {
     let nums = [];
 
     while (day.isSameOrBefore(max)) {
-        if (daydata.hasOwnProperty(day)) {
-            nums.push(daydata[day].num);
-            for (let i = 0; i < (isNum(daydata[day].num) ? daydata[day].num : 1); i++) {
-                vals.push(daydata[day].val);
-            }
+        if (daydata.hasOwnProperty(+day)) {
+            nums.push(daydata[+day].num);
+            vals.push(daydata[+day].val);
         } else {
             vals.push(fillval);
-            nums.push(0);
+            // for fillval==0 the following is correct and for fillval==null the entries are ignored in weighted_mean
+            nums.push(1);
         }
         if (vals.length === ndays) {
             out.x.push(day.clone().subtract(Math.ceil((ndays - 1) / 2), "days").format("YYYY-MM-DD"));
-            out.y.push(mean(vals));
+            out.y.push(aggregation_func(vals, nums));
             out.y2.push(sum(nums));
             vals.shift();
             nums.shift();
@@ -132,13 +140,15 @@ export default class Statistics {
 
     get user_rating_vs_date_read() {
         let valid_data = [];
+        let nums_data = [];
         Object.keys(this.books_by_date_read).forEach(d => {
             let ratings = this.books_by_date_read[d].books.map(b => b.user_rating).filter(x => x > 0);
             if (ratings.length > 0) {
                 valid_data.push({date: moment(+d), val: mean(ratings), num: ratings.length});
+                nums_data.push({date: moment(+d), val: ratings.length, num: 1});
             }
         });
-        return {data1: valid_data};
+        return {data1: valid_data, data2: nums_data};
     }
 
     get books_pages_read() {
@@ -165,11 +175,12 @@ export default class Statistics {
         });
 
         Object.keys(this.books_by_date_read).forEach(d => {
-            valid_data_books.push({date: moment(+d), val: this.books_by_date_read[d].books.length * 7});
+            valid_data_books.push({date: moment(+d), val: this.books_by_date_read[d].books.length * 7, num: 1});
             valid_data_pages.push({
                 date: moment(+d),
                 val: sum(this.books_by_date_read[d].books.filter(b => !b.date_started.isValid()).map(b => b.num_pages))
-                + (pages_per_day_from_start_end.hasOwnProperty(d) ? pages_per_day_from_start_end[d] : 0)
+                + (pages_per_day_from_start_end.hasOwnProperty(d) ? pages_per_day_from_start_end[d] : 0),
+                num: 1
             });
             this.books_by_date_read[d].books.forEach((b, i) => {
                 dots_x.push(moment(+d).format("YYYY-MM-DD"));

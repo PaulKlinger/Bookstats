@@ -22,6 +22,23 @@ export function sum(a) {
     return contains_number ? total : null;
 }
 
+export function sum_with_multiplicity(values, mults) {
+    if (values.length !== mults.length) {
+        console.log("Different number of values & multiplicities!");
+        return null;
+    }
+    let total = 0;
+    let contains_number = false;
+    values.forEach((x, mi) => {
+            if (isNum(x) && isNum(mults[mi])) {
+                contains_number = true;
+                total += mults[mi] * x;
+            }
+        }
+    );
+    return contains_number ? total : null;
+}
+
 export function mean(a) {
     let total = 0;
     let num = 0;
@@ -33,6 +50,22 @@ export function mean(a) {
         }
     );
     return num > 0 ? total / num : null;
+}
+
+export function weighted_mean(values, weights) {
+    if (values.length !== weights.length) {
+        console.log("Different number of values & weights in weighted mean!");
+        return null;
+    }
+    let total = 0;
+    let total_num = 0;
+    values.forEach((v, ni) => {
+        if (isNum(v) && isNum(weights[ni])) {
+            total += v * weights[ni];
+            total_num += weights[ni];
+        }
+    });
+    return total_num > 0 ? total / total_num : null;
 }
 
 export function meanStdDev(a) {

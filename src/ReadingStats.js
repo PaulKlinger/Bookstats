@@ -17,7 +17,8 @@ export default class ReadingStats extends Component {
                                            yaxis_title="pages read / day" y2_type="line"
                                            yaxis2_title="books read / week"
                                            line_1_legend="pages" line_2_legend="books"
-                                           default_ndays={62} fillval={0}/>
+                                           default_ndays={62} fillval_1={0} fillval_2={0}
+                                           aggregation_1={"mean"} aggregation_2={"mean"}/>
                 <Bar title="# books finished by weekday"
                      data={this.props.statistics.weekday_finish}
                      xaxis_title="weekday of finish date" yaxis_title="# of books"/>
