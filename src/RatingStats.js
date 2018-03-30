@@ -24,6 +24,7 @@ export default class RatingStats extends Component {
                 <TimeLineSlidingWindowPlot title="average of your rating"
                                            data={this.props.statistics.user_rating_vs_date_read}
                                            yaxis_title="your rating" yaxis2_title="# rated books"
+                                           line_1_legend="rating" line_2_legend="# books"
                                            default_ndays={62} fillval_1={null} fillval_2={0}
                                            aggregation_1={"mean"} aggregation_2={"sum"}/>
                 <Histogram title="difference between your rating and average rating"
