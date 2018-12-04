@@ -78,6 +78,13 @@ export default class Statistics {
         return this._total_pages;
     }
 
+    get total_words() {
+        if (this._total_words === undefined) {
+            this._total_words = sum(this.data.map(b => b.num_words));
+        }
+        return this._total_words;
+    }
+
     get user_rating_vs_average_rating() {
         let out = {x: [], y: [], text: []};
         this.data_primary.forEach(book => {

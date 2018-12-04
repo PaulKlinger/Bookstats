@@ -8,7 +8,7 @@ import Statistics from './Statistics'
 
 class Book {
     constructor(primary, title, author, isbn, user_rating, average_rating, num_pages, date_started, date_read, author_sort,
-                publication_year, genres) {
+                publication_year, genres, num_words) {
         this.primary = primary;
         this.title = title;
         this.author = author;
@@ -21,6 +21,10 @@ class Book {
         this.date_read = date_read;
         this.publication_year = publication_year;
         this.genres = genres;
+        this.num_words = num_words;
+        if (this.num_words === null && this.num_pages !== null) {
+            this.num_words = this.num_pages * 270;
+        }
 
         this.book_moved = false; // Book date_read has been artificially moved (e.g. to spread Jan 1 books over year)
     }
@@ -71,6 +75,16 @@ function parseReadDates(read_dates_string) {
 }
 
 
+function get_num_words(private_notes) {
+    let num_words = null;
+    const m = private_notes.match(/^words: (\d+)$/);
+    if (m !== null) {
+        num_words = +m[1];
+    }
+    return num_words;
+}
+
+
 export default function parseExport(file, options) {
     return new Promise((resolve, reject) => {
         Papa.parse(file,
@@ -112,7 +126,8 @@ export default function parseExport(file, options) {
                                         rd.end, // date_read
                                         columns[column_names.indexOf("Author l-f")], // author_sort
                                         columns[column_names.indexOf("Original Publication Year")], // publication_year
-                                        genres // genres
+                                        genres, // genres
+                                        get_num_words(columns[column_names.indexOf("Private Notes")]) //num_words
                                     ))
                             });
                         }
