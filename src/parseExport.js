@@ -112,6 +112,11 @@ export default function parseExport(file, options) {
                                     end: moment(columns[column_names.indexOf("Date Read")], "YYYY/MM/DD"),
                                     start: moment.invalid()})
                             }
+                            if (read_dates.length === 0) { // This book was read but we don't know when
+                                read_dates.push({
+                                    end: moment.invalid(),
+                                    start: moment.invalid()})
+                            }
                             read_dates.forEach((rd, i) =>{
                                 data.push(
                                     new Book(
