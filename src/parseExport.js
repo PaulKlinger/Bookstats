@@ -119,9 +119,12 @@ export default function parseExport(file, options) {
                                         columns[column_names.indexOf("Title")], // title
                                         columns[column_names.indexOf("Author")], // author
                                         columns[column_names.indexOf("ISBN13")], // isbn
-                                        columns[column_names.indexOf("My Rating")] === "0" ? null : parseFloat(columns[7]), // user_rating
-                                        columns[column_names.indexOf("Average Rating")] === "0" ? null : parseFloat(columns[8]), // average_rating
-                                        columns[column_names.indexOf("Number of Pages")] === "" ? null : parseFloat(columns[11]), // num_pages
+                                        columns[column_names.indexOf("My Rating")] === "0"
+                                            ? null : parseFloat(columns[column_names.indexOf("My Rating")]), // user_rating
+                                        columns[column_names.indexOf("Average Rating")] === "0"
+                                            ? null : parseFloat(columns[column_names.indexOf("Average Rating")]), // average_rating
+                                        columns[column_names.indexOf("Number of Pages")] === ""
+                                            ? null : parseFloat(columns[column_names.indexOf("Number of Pages")]), // num_pages
                                         rd.start, // date_started
                                         rd.end, // date_read
                                         columns[column_names.indexOf("Author l-f")], // author_sort
