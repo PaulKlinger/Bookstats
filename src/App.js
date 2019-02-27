@@ -92,7 +92,7 @@ class App extends Component {
                                            disabled={this.state.processing}/>
                                     <br />
                                     <span className="link_button" id="demo_link"
-                                       style={{display: this.state.processing ? "none" : "inline"}}
+                                       style={{display: this.state.processing ? "none" : "block"}}
                                        onClick={this.show_demo}>(show demo)</span>
                                 </div>
                                 <div id="processing" className="float"
