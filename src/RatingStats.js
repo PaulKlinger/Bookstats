@@ -54,6 +54,10 @@ export default class RatingStats extends Component {
                                        {
                                            column: "rating_diff_2prec", name: "Δ ★",
                                            cmpfunction: (a, b) => cmpNumNullLast(a.rating_diff, b.rating_diff)
+                                       },
+                                       {
+                                        column: "reading_count", name: "# read",
+                                        cmpfunction: (a, b) => a.reading_count - b.reading_count
                                        }
                                    ]} defaultSort={{column: "rating_diff_2prec", mult: -1}}/>
                 </div>

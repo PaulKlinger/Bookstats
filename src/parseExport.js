@@ -8,7 +8,7 @@ import Statistics from './Statistics'
 
 class Book {
     constructor(primary, title, author, isbn, user_rating, average_rating, num_pages, date_started, date_read, author_sort,
-                publication_year, genres, num_words) {
+                publication_year, genres, num_words, reading_count) {
         this.primary = primary;
         this.title = title;
         this.author = author;
@@ -25,6 +25,7 @@ class Book {
         if (this.num_words === null && this.num_pages !== null) {
             this.num_words = this.num_pages * 270;
         }
+        this.reading_count = reading_count // number of times this book has been read
 
         this.book_moved = false; // Book date_read has been artificially moved (e.g. to spread Jan 1 books over year)
     }
@@ -135,7 +136,8 @@ export default function parseExport(file, options) {
                                         columns[column_names.indexOf("Author l-f")], // author_sort
                                         columns[column_names.indexOf("Original Publication Year")], // publication_year
                                         genres, // genres
-                                        get_num_words(columns[column_names.indexOf("Private Notes")]) //num_words
+                                        get_num_words(columns[column_names.indexOf("Private Notes")]), //num_words
+                                        read_dates.length // reading_count
                                     ))
                             });
                         }
