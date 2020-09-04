@@ -5,7 +5,7 @@
   "homepage": "https://almoturg.com/bookstats",
   "dependencies": {
     "moment": "^2.18.1",
-    "papaparse": "^4.3.2",
+    "papaparse": "^5.3.0",
     "plotly.js": "^1.27.1",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
