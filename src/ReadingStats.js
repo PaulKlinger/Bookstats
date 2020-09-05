@@ -3,7 +3,7 @@
  */
 import React, {Component} from 'react';
 
-import {Bar, TimeLineSlidingWindowPlot, DotViolin} from './shared_plots.js'
+import {Bar, TimeLineSlidingWindowPlot, DotViolin, ScatterPlot} from './shared_plots.js'
 
 
 export default class ReadingStats extends Component {
@@ -33,6 +33,9 @@ export default class ReadingStats extends Component {
                          data={this.props.statistics.genre_books}
                          yaxis_title="# books read" margin_bottom="150" margin_top="50" tickangle="-45"/>
                     : ""}
+                <ScatterPlot title="read date vs publication date"
+                             data={this.props.statistics.read_vs_pub}
+                             xaxis_title="read date" yaxis_title="publication date"/>
                 <div className="clearfloat"/>
             </div>
         );

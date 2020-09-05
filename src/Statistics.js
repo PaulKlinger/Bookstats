@@ -125,6 +125,17 @@ export default class Statistics {
         return {x: years, text: titles};
     }
 
+    get read_vs_pub() {
+        const data = this.data_valid_date_read.filter(b => b.publication_year > 0);
+        let out = {x: [], y: [], text: []};
+        data.forEach(book => {
+            out.x.push(book.date_read.format("YYYY-MM-DD"));
+            out.y.push(+book.publication_year);
+            out.text.push(book.title);
+        })
+        return out;
+    }
+
     get months_books_read_bar() {
         const months = this.data_valid_date_read.map(b => b.date_read.clone().startOf("month").add(1, "day").toISOString());
         const counts = countEach(months);
