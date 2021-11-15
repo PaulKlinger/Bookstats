@@ -329,7 +329,7 @@ export default class Statistics {
         return this.data_primary.map(b => ({
             title: b.title, author: b.author, author_sort: b.author_sort,
             user_rating: b.user_rating, avg_rating: b.average_rating,
-            avg_rating_2prec: b.average_rating.toPrecision(2),
+            avg_rating_2prec: b.average_rating === null ? null : b.average_rating.toPrecision(2),
             rating_diff: b.user_rating === null ? null : b.user_rating - b.average_rating,
             rating_diff_2prec: b.user_rating === null ? null : (b.user_rating - b.average_rating).toPrecision(2),
             reading_count: b.reading_count
