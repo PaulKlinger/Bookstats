@@ -9,7 +9,7 @@
     "plotly.js": "^1.55.1",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
-    "react-ga": "^2.2.0"
+    "react-ga4": "^1.4.1"
   },
   "devDependencies": {
     "react-scripts": "1.0.1"

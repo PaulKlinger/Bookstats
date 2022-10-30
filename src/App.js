@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import ReactGA from 'react-ga'
+import ReactGA from 'react-ga4'
 
 import logo from './img/logo.png';
 import error_smiley from './img/error_smiley.png'
@@ -19,7 +19,7 @@ class App extends Component {
         this.handle_options = this.handle_options.bind(this);
         this.calc_statistics = this.calc_statistics.bind(this);
 
-        ReactGA.initialize('UA-133792-4');
+        ReactGA.initialize('G-LPPE6QSC2K');
         ReactGA.pageview(window.location.pathname);
     }
 
