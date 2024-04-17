@@ -1,6 +1,4 @@
 import React, {Component} from 'react';
-import ReactGA from 'react-ga4'
-
 import logo from './img/logo.png';
 import error_smiley from './img/error_smiley.png'
 import './css/App.css';
@@ -18,9 +16,6 @@ class App extends Component {
         this.show_demo = this.show_demo.bind(this);
         this.handle_options = this.handle_options.bind(this);
         this.calc_statistics = this.calc_statistics.bind(this);
-
-        ReactGA.initialize('G-LPPE6QSC2K');
-        ReactGA.pageview(window.location.pathname);
     }
 
     show_demo(e) {
@@ -47,12 +42,6 @@ class App extends Component {
         if (this.state.file !== undefined && this.state.file !== null) {
             this.setState({processing: true, error: false, statistics: null}, () => {
                 parseExport(this.state.file, {distribute_year: this.state.distribute_year}).then((statistics) => {
-                    ReactGA.event({
-                        category: 'statistics',
-                        action: 'calc_statistics',
-                        label: statistics.data.length.toString(),
-                        value: statistics.data.length
-                    });
                     self.setState({statistics: statistics, processing: false});
                 }, (reason) => {
                     console.log(reason);

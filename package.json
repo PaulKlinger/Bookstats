@@ -8,8 +8,7 @@
     "papaparse": "^5.3.0",
     "plotly.js": "^1.55.1",
     "react": "^15.5.4",
-    "react-dom": "^15.5.4",
-    "react-ga4": "^1.4.1"
+    "react-dom": "^15.5.4"
   },
   "devDependencies": {
     "react-scripts": "1.0.1"
