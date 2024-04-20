@@ -67,10 +67,13 @@ function parseGenres(genres_string) {
 
 
 function parseReadDates(read_dates_string) {
+    if (read_dates_string === "") {
+        return []
+    }
     const read_dates = [];
     read_dates_string.split(";").forEach(rd => {
         const start_end = rd.split(",");
-        read_dates.push({start: moment(start_end[0], "YYYY-MM-DD"), end: moment(start_end[1], "YYYY-MM-DD")})
+        read_dates.push({start: moment.utc(start_end[0], "YYYY-MM-DD"), end: moment.utc(start_end[1], "YYYY-MM-DD")})
     });
     return read_dates;
 }
@@ -105,18 +108,19 @@ export default function parseExport(file, options) {
                     let data = [];
                     results.data.forEach(columns => {
                         if (columns[column_names.indexOf("Exclusive Shelf")] === "read") {
-
                             const genres = genres_index === -1 ? undefined : parseGenres(columns[genres_index]);
                             const read_dates = read_dates_index === -1 ? []: parseReadDates(columns[read_dates_index]);
-                            if (read_dates.length === 0 && columns[column_names.indexOf("Date Read")] !== ""){
-                                read_dates.push({
-                                    end: moment(columns[column_names.indexOf("Date Read")], "YYYY/MM/DD"),
-                                    start: moment.invalid()})
-                            }
-                            if (read_dates.length === 0) { // This book was read but we don't know when
-                                read_dates.push({
-                                    end: moment.invalid(),
-                                    start: moment.invalid()})
+                            if (read_dates.length === 0) {
+                                if (columns[column_names.indexOf("Date Read")] !== ""){
+                                    read_dates.push({
+                                        end: moment.utc(columns[column_names.indexOf("Date Read")], ["YYYY/MM/DD", "DD/MM/YYYY", "MM/DD/YYYY"]),
+                                        start: moment.invalid()})
+                                } else { // This book was read but we don't know when
+                                    read_dates.push({
+                                        end: moment.invalid(),
+                                        start: moment.invalid()
+                                    })
+                                }
                             }
                             read_dates.forEach((rd, i) =>{
                                 data.push(
